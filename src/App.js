@@ -1,7 +1,13 @@
 import React from "react";
 
+import RootLayout from "./RootLayout";
+
 function App() {
-  return <div>Initial commit</div>;
+  return (
+    <div>
+      <RootLayout />
+    </div>
+  );
 }
 
 export default App;
