@@ -1,7 +1,7 @@
 import React, { Component } from "react";
+import propTypes from "prop-types";
 import L from "leaflet";
 import { initMap } from "../../settings/mapSettings";
-
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -16,6 +16,11 @@ const mailIcon = L.icon({
 
 class MyMap extends Component {
   state = {};
+
+  static propTypes = {
+    postcardsList: propTypes.array,
+  };
+
   componentDidMount() {
     this.map = L.map("map", initMap.position);
     L.tileLayer(initMap.tileLayer.url, initMap.tileLayer.config).addTo(

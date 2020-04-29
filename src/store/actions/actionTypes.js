@@ -1,0 +1,2 @@
+export const GET_POSTCARDS = "GET_POSTCARDS";
+export const MAIN_LOADER_SWITCH = "MAIN_LOADER_SWITCH";
