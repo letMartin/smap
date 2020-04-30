@@ -35,6 +35,7 @@ class MyMap extends Component {
     markers.addTo(this.map);
     this.props.getPostcards();
   }
+  
 
   handleAddPostcardClick() {
     this.setState({ isLocationLoading: true });
