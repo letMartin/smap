@@ -1,2 +1,3 @@
 export const GET_POSTCARDS = "GET_POSTCARDS";
 export const MAIN_LOADER_SWITCH = "MAIN_LOADER_SWITCH";
+export const SWITCH_MODAL = "SWITCH_MODAL";
