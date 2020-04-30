@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import propTypes from "prop-types";
 import L from "leaflet";
 import { initMap } from "../../settings/mapSettings";
+
+import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
+
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -18,7 +21,7 @@ class MyMap extends Component {
   state = {};
 
   static propTypes = {
-    postcardsList: propTypes.array,
+    postcardsData: propTypes.object,
   };
 
   componentDidMount() {
@@ -30,10 +33,41 @@ class MyMap extends Component {
       markers.addLayer(L.marker([52, 16 + el], { icon: mailIcon }));
     });
     markers.addTo(this.map);
+    this.props.getPostcards();
   }
 
+  handleAddPostcardClick() {
+    this.setState({ isLocationLoading: true });
+    this.getPosition()
+      .then((position) => {
+        const { latitude, longitude } = position.coords;
+        const location = {
+          latitude,
+          longitude,
+        };
+        markers.addLayer(L.marker([latitude, longitude], { icon: mailIcon }));
+        markers.addTo(this.map);
+        this.setState({ isLocationLoading: false, location });
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  }
+
+  getPosition = (options) => {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  };
+
   render() {
-    return <div className="my-map__container" id="map"></div>;
+    return (
+      <div className="my-map__container" id="map">
+        <AddPostcardButton
+          onAddPostcardClick={() => this.handleAddPostcardClick()}
+        />
+      </div>
+    );
   }
 }
 

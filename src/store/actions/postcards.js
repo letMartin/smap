@@ -1,10 +1,10 @@
 import * as actionTypes from "./actionTypes";
-import axios from "axios";
+import axios from "../../services/axiosConfig";
 
 export const getPostcards = () => {
   return (dispatch) => {
     axios
-      .get()
+      .get("/postcards.json")
       .then((res) => {
         dispatch(getPostcardsAction(res.data));
       })
@@ -18,7 +18,7 @@ export const sendPostcard = (postcard) => {
   return (dispatch) => {
     dispatch(mainLoaderSwitchAction());
     axios
-      .post()
+      .post("/postcards.json", postcard)
       .then(() => {})
       .catch((error) => {
         console.log(error);

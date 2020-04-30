@@ -1,7 +1,7 @@
 import * as actionTypes from "../actions/actionTypes";
 
 export const initialState = {
-  postcards: [],
+  postcards: {},
 };
 
 export const postcardsReducer = (state = initialState, action) => {

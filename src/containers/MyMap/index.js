@@ -9,7 +9,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state) => {
   return {
-    postcardsList: state.postcards.postcards,
+    postcardsData: state.postcards.postcards,
   };
 };
 
