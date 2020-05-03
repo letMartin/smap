@@ -1,0 +1,12 @@
+.file-input__container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  h2 {
+    padding-right: 16px;
+  }
+  input {
+    display: none;
+  }
+}
