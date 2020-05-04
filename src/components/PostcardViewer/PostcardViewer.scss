@@ -1,0 +1,17 @@
+.postcard-viewer__container {
+  // width: auto;
+  // height: 80vh;
+  // border: 1px solid red;
+  // max-width: 900px;
+  // max-height: 80vh;
+  // background-color: #fff!important;
+  // margin: 10vh auto;
+  // display: flex;
+  // justify-content: center;
+  img {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+  }
+}

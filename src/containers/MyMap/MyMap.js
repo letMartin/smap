@@ -5,6 +5,7 @@ import { initMap } from "../../settings/mapSettings";
 
 import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
 import CustomButton from "../../components/CustomButton/CustomButton";
+import PostcardViewer from '../../components/PostcardViewer/PostcardViewer'
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
@@ -13,8 +14,8 @@ import "./MyMap.scss";
 
 const markers = new L.markerClusterGroup();
 
-const deviceIcon = L.icon({
-  iconUrl: initMap.urls.deviceIcon,
+const mailIcon = L.icon({
+  iconUrl: initMap.urls.mailIcon,
   iconSize: [34, 34],
 });
 
@@ -26,6 +27,9 @@ class MyMap extends Component {
       zoom: 8,
       zoomControl: false,
     },
+    isPostcardOpen: false,
+    postcardImageLoaded: false,
+    postcardImageUrl: ''
   };
 
   static propTypes = {
@@ -36,7 +40,15 @@ class MyMap extends Component {
   componentDidMount() {
     this.map = L.map("map-main", this.state.position);
     this.handleTileLayer();
-    this.props.getPostcards();
+    this.props.getPostcards()
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevLen = Object.entries(prevProps.postcardsData).length
+    const nextLen = Object.entries(this.props.postcardsData).length
+    if (nextLen > prevLen) {
+      this.handleAddPostcardMarkers(this.props.postcardsData)
+    }
   }
 
   handleTileLayer = () => {
@@ -45,62 +57,62 @@ class MyMap extends Component {
     );
   };
 
-  handleAddUserPosition = (devicePosition) => {
-    if (this.state.layer) {
-      markers.removeLayer(this.state.layer);
+  handleAddPostcardMarkers(postcards) {
+    for (let key in postcards) {
+      const { location, date, sender } = postcards[key]
+      markers
+        .addLayer(L.marker(location, { icon: mailIcon })
+          .on('click', () => this.handleOpenPostcard(postcards[key]))
+          .bindTooltip(`From ${sender} on ${date}`, { direction: 'top' }));
     }
-    const layer = L.marker(devicePosition, { icon: deviceIcon });
-    markers.addLayer(layer);
     markers.addTo(this.map);
-    this.map.panTo(devicePosition);
-    this.map.setView(devicePosition, 11);
-    this.setState({ layer });
-  };
-
-  handleAddPostcardClick() {
-    this.setState({ isLocationLoading: true });
-    this.getPosition()
-      .then((position) => {
-        const { latitude, longitude } = position.coords;
-        const location = {
-          latitude,
-          longitude,
-        };
-        const devicePosition = [latitude, longitude];
-        this.handleAddUserPosition(devicePosition);
-        this.setState({ isLocationLoading: false, location });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
   }
 
-  getPosition = (options) => {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    });
-  };
+  handleOpenPostcard(postcard) {
+    console.log(postcard)
+    this.setState({
+      isPostcardOpen: true,
+      postcardImageLoaded: false,
+      postcardImageUrl: postcard.url
+    })
+  }
 
-  handleContinueToPostcard() {
+  handleOpenPostcardCreator() {
     this.props.switchModalAction(true);
   }
 
+  handlePostcardImageLoaded() {
+    this.setState({
+      postcardImageLoaded: true
+    })
+  }
+
   render() {
-    const { layer } = this.state;
+    const { layer, isPostcardOpen, postcardImageUrl, postcardImageLoaded } = this.state;
     return (
-      <div className="my-map__container" id="map-main">
-        {!layer && (
-          <AddPostcardButton
-            onAddPostcardClick={() => this.handleAddPostcardClick()}
-          />
-        )}
-        {layer && (
-          <CustomButton
-            content="Continue to postcard"
-            onButtonClick={() => this.handleContinueToPostcard()}
-          />
-        )}
-      </div>
+      <>
+        <div className="my-map__container" id="map-main">
+          {!this.props.isModalOpen && (
+            <div style={{ display: 'flex' }}>
+              <AddPostcardButton
+                onAddPostcardClick={() => this.handleOpenPostcardCreator()}
+              />
+              <h2 style={{ zIndex: 1000, color: '#4caf50' }}>Send me a postcard</h2>
+            </div>
+          )}
+          {layer && (
+            <CustomButton
+              content="Continue to postcard"
+              onButtonClick={() => this.handleContinueToPostcard()}
+            />
+          )}
+        </div>
+        <PostcardViewer
+          open={isPostcardOpen}
+          imgUrl={postcardImageUrl}
+          isLoaded={postcardImageLoaded}
+          onImageReady={() => this.handlePostcardImageLoaded()} />
+      </>
     );
   }
 }

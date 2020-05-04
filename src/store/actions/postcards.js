@@ -19,7 +19,7 @@ export const sendPostcard = (postcard) => {
     dispatch(mainLoaderSwitchAction());
     axios
       .post("/postcards.json", postcard)
-      .then(() => {})
+      .then(() => { })
       .catch((error) => {
         console.log(error);
       });

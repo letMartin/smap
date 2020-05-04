@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
+import firebase from 'firebase'
 
 import DeviceLocation from "../DeviceLocation";
 import ImageViewer from "../../components/ImageViewer/ImageViewer";
@@ -29,8 +30,8 @@ class PostcardCreator extends Component {
     imageData: {
       image: null,
       url: null,
-      height: 190,
-      width: 400,
+      height: 0,
+      width: 0,
     },
     senderName: {
       key: "senderName",
@@ -54,6 +55,8 @@ class PostcardCreator extends Component {
 
   static propTypes = {
     deviceLocation: propTypes.array,
+    switchModalAction: propTypes.func,
+    getPostcards: propTypes.func
   };
 
   handleFileInputChange(e) {
@@ -106,7 +109,33 @@ class PostcardCreator extends Component {
   };
 
   handleSubmitPostcard() {
-    console.log("Submitting");
+    const { image } = this.state.imageData
+    const { senderName, postcardText } = this.state
+    const filename = `${Date.now()}-${image.name}`
+    const storageRef = firebase.storage().ref('/smap-images/' + filename);
+    const uploadTask = storageRef.put(image);
+    uploadTask.on('state_changed', (snapshot) => {
+      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+    }, (error) => {
+      console.log(error)
+    }, () => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        const postcardKey = firebase.database().ref('postcards/').push().key
+        const date = new Date().toISOString().substring(0, 10)
+        const update = {}
+        const postcard = {
+          sender: senderName.value,
+          content: postcardText.value,
+          location: this.props.deviceLocation,
+          url: downloadURL,
+          date
+        }
+        update['/postcards/' + postcardKey] = postcard
+        firebase.database().ref().update(update)
+          .then(() => this.props.getPostcards())
+      });
+    });
   }
 
   render() {
@@ -152,7 +181,7 @@ class PostcardCreator extends Component {
         <div>
           {activeStep < steps.length && (
             <div className="postcard-creator-buttons__container">
-              <Button>Reset</Button>
+              <Button onClick={() => this.props.switchModalAction(false)}>Reset</Button>
               <ButtonGroup>
                 <Button disabled={activeStep === 0} onClick={this.handleBack}>
                   Back

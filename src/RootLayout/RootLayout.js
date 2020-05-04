@@ -9,13 +9,14 @@ import "./RootLayout.scss";
 class RootLayout extends Component {
   static propTypes = {
     prop: PropTypes.any,
+    isModalOpen: PropTypes.bool,
   };
 
   render() {
     return (
       <div className="root-layout__container">
         <MyMap />
-        <PostcardCreator />
+        {this.props.isModalOpen && <PostcardCreator />}
       </div>
     );
   }

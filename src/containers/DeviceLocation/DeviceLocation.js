@@ -49,7 +49,6 @@ class DeviceLocation extends Component {
   };
 
   getDevicePosition = () => {
-    this.setState({ isLocationLoading: true });
     const { deviceLocation } = this.props;
     if (this.props.deviceLocation.length) {
       this.handleAddDevicePosition(deviceLocation);

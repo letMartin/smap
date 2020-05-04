@@ -1,5 +1,12 @@
 import PostcardCreator from "./PostcardCreator";
 import { connect } from "react-redux";
+import { switchModalAction } from '../../store/actions/modal';
+import { getPostcards } from '../../store/actions/postcards'
+
+const mapDispatchToProps = {
+  switchModalAction,
+  getPostcards
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -8,4 +15,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(PostcardCreator);
+export default connect(mapStateToProps, mapDispatchToProps)(PostcardCreator);
