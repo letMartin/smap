@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
-import firebase from 'firebase'
+import firebase from "firebase";
+import Resizer from "react-image-file-resizer";
 
 import DeviceLocation from "../DeviceLocation";
 import ImageViewer from "../../components/ImageViewer/ImageViewer";
@@ -56,11 +57,58 @@ class PostcardCreator extends Component {
   static propTypes = {
     deviceLocation: propTypes.array,
     switchModalAction: propTypes.func,
-    getPostcards: propTypes.func
+    getPostcards: propTypes.func,
   };
+
+  // handleFileInputChange(e) {
+  //   const image = e.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(image);
+  //   reader.onloadend = () => {
+  //     this.setState({
+  //       imageData: {
+  //         ...this.state.imageData,
+  //         url: reader.result,
+  //         image,
+  //       },
+  //     });
+  //   };
+  // }
+
+  // formatBytes(bytes, decimals = 2) {
+  //   if (bytes === 0) return "0 Bytes";
+
+  //   const k = 1024;
+  //   const dm = decimals < 0 ? 0 : decimals;
+  //   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  //   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+  // }
 
   handleFileInputChange(e) {
     const image = e.target.files[0];
+    if (image && image.size) {
+      console.log(image.size / 1024);
+    }
+    if (image) {
+      Resizer.imageFileResizer(
+        image,
+        700,
+        700,
+        "JPEG",
+        100,
+        0,
+        (blob) => this.handleNewImgFile(blob),
+        "blob"
+      );
+    }
+  }
+
+  handleNewImgFile(blob) {
+    const filename = `postcard-${Date.now()}`;
+    const image = new File([blob], filename, { type: "image/jpeg" });
     const reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onloadend = () => {
@@ -78,6 +126,10 @@ class PostcardCreator extends Component {
     const imageData = { ...this.state.imageData };
     imageData.height = e.target.height;
     imageData.width = e.target.width;
+    console.log("H: ", e.target.height);
+    console.log("W: ", e.target.width);
+    console.log("H natural: ", e.target.naturalHeight);
+    console.log("W natural: ", e.target.naturalWidth);
     this.setState({
       imageData,
     });
@@ -109,38 +161,47 @@ class PostcardCreator extends Component {
   };
 
   handleSubmitPostcard() {
-    const { image } = this.state.imageData
-    const { senderName, postcardText } = this.state
-    const filename = `${Date.now()}-${image.name}`
-    const storageRef = firebase.storage().ref('/smap-images/' + filename);
+    const { image } = this.state.imageData;
+    const { senderName, postcardText } = this.state;
+    const filename = `postcard-${Date.now()}`;
+    const storageRef = firebase.storage().ref("/smap-images/" + filename);
     const uploadTask = storageRef.put(image);
-    uploadTask.on('state_changed', (snapshot) => {
-      var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
-    }, (error) => {
-      console.log(error)
-    }, () => {
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        const postcardKey = firebase.database().ref('postcards/').push().key
-        const date = new Date().toISOString().substring(0, 10)
-        const update = {}
-        const postcard = {
-          sender: senderName.value,
-          content: postcardText.value,
-          location: this.props.deviceLocation,
-          url: downloadURL,
-          date
-        }
-        update['/postcards/' + postcardKey] = postcard
-        firebase.database().ref().update(update)
-          .then(() => this.props.getPostcards())
-      });
-    });
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          const postcardKey = firebase.database().ref("postcards/").push().key;
+          const date = new Date().toISOString().substring(0, 10);
+          const update = {};
+          const postcard = {
+            sender: senderName.value,
+            content: postcardText.value,
+            location: this.props.deviceLocation,
+            url: downloadURL,
+            date,
+          };
+          update["/postcards/" + postcardKey] = postcard;
+          firebase
+            .database()
+            .ref()
+            .update(update)
+            .then(() => this.props.getPostcards());
+        });
+      }
+    );
   }
 
   render() {
     const { activeStep, steps, imageData } = this.state;
     let isNextStepBlocked = true;
+    console.log(this.state.imageData);
     if (activeStep === 0) {
       isNextStepBlocked = !this.props.deviceLocation.length;
     } else if (activeStep === 1) {
@@ -181,7 +242,9 @@ class PostcardCreator extends Component {
         <div>
           {activeStep < steps.length && (
             <div className="postcard-creator-buttons__container">
-              <Button onClick={() => this.props.switchModalAction(false)}>Reset</Button>
+              <Button onClick={() => this.props.switchModalAction(false)}>
+                Reset
+              </Button>
               <ButtonGroup>
                 <Button disabled={activeStep === 0} onClick={this.handleBack}>
                   Back

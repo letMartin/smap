@@ -2,3 +2,14 @@
   width: 100%;
   height: 100vh;
 }
+
+.leaflet-tooltip-pane {
+  margin-top: -15px;
+}
+
+.my-map__title {
+  padding: 0 3px;
+  border-radius: 3px;
+  z-index: 1000;
+  color: #3f51b5;
+}
