@@ -29,7 +29,7 @@ const PostcardViewer = ({
         <img src={postcard.image.url} alt="" onLoad={onImageReady} />
       </div>
       {!isLoaded && (
-        <div style={{ height, width }} className="postcard-viewer__progress">
+        <div className="postcard-viewer__progress">
           <CircularProgress />
         </div>
       )}
