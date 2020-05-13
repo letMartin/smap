@@ -126,9 +126,7 @@ class MyMap extends Component {
               <AddPostcardButton
                 onAddPostcardClick={() => this.handleOpenPostcardCreator()}
               />
-              <h2 className="my-map__title">
-                Send me a postcard | My public postcard board
-              </h2>
+              <h2 className="my-map__title">Send me a postcard</h2>
             </div>
           )}
           {layer && (

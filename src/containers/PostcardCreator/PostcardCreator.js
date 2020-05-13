@@ -50,9 +50,9 @@ class PostcardCreator extends Component {
     },
     activeStep: 0,
     steps: [
-      { name: "location", label: "Get location" },
-      { name: "image", label: "Add image" },
-      { name: "text", label: "Add text" },
+      { name: "location", label: "Location" },
+      { name: "image", label: "Image" },
+      { name: "text", label: "Text" },
     ],
     imageError: "",
     progress: 0,

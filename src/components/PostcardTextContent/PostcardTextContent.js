@@ -25,7 +25,7 @@ const PostcardTextContent = ({
   return (
     <div className="step-content__container ">
       <form autoComplete="off">
-        <FormControl fullWidth style={{ marginTop: "24px" }}>
+        <FormControl fullWidth>
           <InputLabel htmlFor="input-with-icon-adornment">Name</InputLabel>
           <Input
             value={name.value}
