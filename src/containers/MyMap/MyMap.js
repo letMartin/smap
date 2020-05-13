@@ -80,7 +80,7 @@ class MyMap extends Component {
       markers.addLayer(
         L.marker(location, { icon: mailIcon })
           .on("click", () => this.handleOpenPostcard(postcards[key]))
-          .bindTooltip(`From ${sender} on ${date}`, { direction: "top" })
+          .bindTooltip(`${sender} on ${date}`, { direction: "top" })
       );
     }
 

@@ -10,16 +10,14 @@
   &text {
     &--header {
       color: rgba(0, 0, 0, 0.87);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-      display: table;
+      padding-top: 12px;
     }
     &--content {
       color: rgba(0, 0, 0, 0.54);
-      line-height: 1.4rem;
+      padding-top: 6px;
     }
     padding: 0 16px 16px 16px;
     p {
-      padding-top: 16px;
       margin: 0;
     }
   }

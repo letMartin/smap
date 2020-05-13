@@ -268,7 +268,7 @@ class PostcardCreator extends Component {
                   color="primary"
                   onClick={this.handleNext}
                 >
-                  {activeStep === steps.length - 1 ? "Submit" : "Next"}
+                  {activeStep === steps.length - 1 ? "Send" : "Next"}
                 </Button>
               </ButtonGroup>
             </div>
