@@ -14,7 +14,12 @@ const FileInput = ({ onChange, error }) => {
           <AddPhotoAlternateOutlinedIcon style={{ cursor: "pointer" }} />
         </label>
         <p className="file-input__info">Max 10 MB</p>
-        <input type="file" onChange={onChange} id="file-input" />
+        <input
+          type="file"
+          onChange={onChange}
+          id="file-input"
+          accept="image/*"
+        />
         {error !== "" && <p className="file-input__error">{error}</p>}
       </div>
     </div>
