@@ -1,13 +1,15 @@
 export const initMap = {
   tileLayer: {
-    token: "",
     url:
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?access_token=pk.eyJ1Ijoic3RpbGxoYXZlbnRmb3VuZCIsImEiOiJja2E1ZDFvcDIwbHlvM29vYTRsamhkcHk1In0.gMS4-Yw_yXPptDjvJBqgkw",
+      "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}",
     config: {
       detectRetina: true,
       maxZoom: 16,
       minZoom: 2,
       maxNativeZoom: 16,
+      id: "mapbox.outdoors",
+      accessToken:
+        "pk.eyJ1Ijoic3RpbGxoYXZlbnRmb3VuZCIsImEiOiJjanMwcTJrbnExbTY0NDRvMzh6MnZuMmtxIn0.8LqTOLCbuQtAfCqftXzhyQ",
     },
   },
   urls: {
