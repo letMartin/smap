@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
+import { toast } from "react-toastify";
 
 import "./DeviceLocation.scss";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -19,27 +20,24 @@ const deviceIcon = L.icon({
 class DeviceLocation extends Component {
   state = {
     position: {
-      center: [50, 10],
+      center: [50, 16],
       zoom: 8,
       zoomControl: false,
     },
     layer: null,
+    isGettinPosition: false,
   };
 
   static propTypes = {
     getDeviceLocation: propTypes.func,
     deviceLocation: propTypes.array,
+    isModalOpen: propTypes.bool,
   };
 
   componentDidMount() {
     this.mapDevice = L.map("map-device", this.state.position);
     this.handleTileLayer();
     this.getDevicePosition();
-  }
-
-  componentWillUnmount() {
-    this.mapDevice.remove();
-    this.mapDevice = null;
   }
 
   handleTileLayer = () => {
@@ -61,12 +59,20 @@ class DeviceLocation extends Component {
           this.props.getDeviceLocationAction(devicePosition);
         })
         .catch((err) => {
-          console.error(err.message);
+          this.setState({ isGettinPosition: false });
+          let errorMsg = "";
+          if (err.message) {
+            errorMsg = err.message;
+          } else {
+            errorMsg = "Unexpected error occured. Please try again.";
+          }
+          toast.error(errorMsg);
         });
     }
   };
 
   getPosition = () => {
+    this.setState({ isGettinPosition: true });
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject);
     });
@@ -83,14 +89,15 @@ class DeviceLocation extends Component {
 
   render() {
     const { deviceLocation } = this.props;
+    const { isGettinPosition } = this.state;
     return (
       <>
         <div id="map-device" className="step-content__container"></div>
         {deviceLocation.length === 0 && (
           <div className="step-content__container--spinner">
-            <h3>Getting location</h3>
+            {isGettinPosition && <h3>Getting location</h3>}
             <h3>Enable location on your device</h3>
-            <CircularProgress />
+            {isGettinPosition && <CircularProgress />}
           </div>
         )}
       </>

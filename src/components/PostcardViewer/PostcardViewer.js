@@ -12,21 +12,27 @@ const PostcardViewer = ({
   onClose,
   isLoaded,
 }) => {
-  const random = getRandomInt(1, 5);
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
+  const { width, height } = postcard.image;
+  let imgWidth = width;
+  let imgHeight = height;
+  if (isLoaded) {
+    imgWidth = "100%";
+    imgHeight = "100%";
   }
-  const url = `images/img${random}.jpg`;
   return (
     <Dialog
       open={open}
       onClose={onClose}
       className="postcard-viewer__container"
     >
-      <img src={url} alt="" onLoad={onImageReady} />
-      {!isLoaded && <CircularProgress />}
+      <div style={{ width: imgWidth, height: imgHeight }}>
+        <img src={postcard.image.url} alt="" onLoad={onImageReady} />
+      </div>
+      {!isLoaded && (
+        <div style={{ height, width }} className="postcard-viewer__progress">
+          <CircularProgress />
+        </div>
+      )}
       <div className="postcard-viewer__text">
         <p className="postcard-viewer__text--header">{`Received from ${postcard.sender} on ${postcard.date}`}</p>
         {postcard.content !== "" && (

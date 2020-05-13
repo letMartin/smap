@@ -8,8 +8,15 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-const PostcardTextContent = ({ onChange, text, name }) => {
+const PostcardTextContent = ({
+  onChange,
+  text,
+  name,
+  progress,
+  isUploadStarted,
+}) => {
   const styles = {
     colorGrey: {
       color: "#ccc",
@@ -63,6 +70,13 @@ const PostcardTextContent = ({ onChange, text, name }) => {
           }}
         />
       </form>
+      {isUploadStarted && (
+        <div className="progress__container">
+          <p className="progress__percent">{progress.toFixed()} %</p>
+          <CircularProgress />
+          {progress === 100 && <p>Saving postcard...</p>}
+        </div>
+      )}
     </div>
   );
 };
@@ -71,6 +85,8 @@ PostcardTextContent.propTypes = {
   onChange: propTypes.func,
   text: propTypes.object,
   name: propTypes.object,
+  progress: propTypes.number,
+  isUploadStarted: propTypes.bool,
 };
 
 export default PostcardTextContent;

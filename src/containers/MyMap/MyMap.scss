@@ -7,9 +7,24 @@
   margin-top: -15px;
 }
 
-.my-map__title {
-  padding: 0 3px;
-  border-radius: 3px;
-  z-index: 1000;
-  color: #3f51b5;
+.my-map__ {
+  &dashboard {
+    display: flex;
+    padding-bottom: 30px;
+    width: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  &title {
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #3f51b5;
+  }
 }

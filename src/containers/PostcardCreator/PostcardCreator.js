@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/storage";
+import "firebase/database";
 import Resizer from "react-image-file-resizer";
 
 import DeviceLocation from "../DeviceLocation";
@@ -52,6 +54,9 @@ class PostcardCreator extends Component {
       { name: "image", label: "Add image" },
       { name: "text", label: "Add text" },
     ],
+    imageError: "",
+    progress: 0,
+    isUploadStarted: false,
   };
 
   static propTypes = {
@@ -60,43 +65,18 @@ class PostcardCreator extends Component {
     getPostcards: propTypes.func,
   };
 
-  // handleFileInputChange(e) {
-  //   const image = e.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(image);
-  //   reader.onloadend = () => {
-  //     this.setState({
-  //       imageData: {
-  //         ...this.state.imageData,
-  //         url: reader.result,
-  //         image,
-  //       },
-  //     });
-  //   };
-  // }
-
-  // formatBytes(bytes, decimals = 2) {
-  //   if (bytes === 0) return "0 Bytes";
-
-  //   const k = 1024;
-  //   const dm = decimals < 0 ? 0 : decimals;
-  //   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-  //   const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  //   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  // }
-
   handleFileInputChange(e) {
     const image = e.target.files[0];
-    if (image && image.size) {
-      console.log(image.size / 1024);
+    const size = this.getImageSize(image);
+    if (size > 10000) {
+      this.setState({ imageError: "Can't upload images larger than 10 MB" });
+      return;
     }
     if (image) {
       Resizer.imageFileResizer(
         image,
-        700,
-        700,
+        600,
+        600,
         "JPEG",
         100,
         0,
@@ -104,6 +84,11 @@ class PostcardCreator extends Component {
         "blob"
       );
     }
+  }
+
+  getImageSize(image) {
+    const size = image && image.size ? image.size / 1024 : null;
+    return size;
   }
 
   handleNewImgFile(blob) {
@@ -126,10 +111,7 @@ class PostcardCreator extends Component {
     const imageData = { ...this.state.imageData };
     imageData.height = e.target.height;
     imageData.width = e.target.width;
-    console.log("H: ", e.target.height);
-    console.log("W: ", e.target.width);
-    console.log("H natural: ", e.target.naturalHeight);
-    console.log("W natural: ", e.target.naturalWidth);
+    console.log(imageData);
     this.setState({
       imageData,
     });
@@ -142,7 +124,7 @@ class PostcardCreator extends Component {
     this.setState({
       [stateName]: {
         ...this.state[stateName],
-        length: value.length,
+        length: value.trim().length,
         value,
       },
     });
@@ -161,7 +143,8 @@ class PostcardCreator extends Component {
   };
 
   handleSubmitPostcard() {
-    const { image } = this.state.imageData;
+    this.setState({ isUploadStarted: true });
+    const { image, width, height } = this.state.imageData;
     const { senderName, postcardText } = this.state;
     const filename = `postcard-${Date.now()}`;
     const storageRef = firebase.storage().ref("/smap-images/" + filename);
@@ -169,11 +152,13 @@ class PostcardCreator extends Component {
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        this.setState({ progress });
       },
       (error) => {
         console.log(error);
+        this.setState({ isUploadStarted: false });
       },
       () => {
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
@@ -184,7 +169,11 @@ class PostcardCreator extends Component {
             sender: senderName.value,
             content: postcardText.value,
             location: this.props.deviceLocation,
-            url: downloadURL,
+            image: {
+              url: downloadURL,
+              width,
+              height,
+            },
             date,
           };
           update["/postcards/" + postcardKey] = postcard;
@@ -192,22 +181,41 @@ class PostcardCreator extends Component {
             .database()
             .ref()
             .update(update)
-            .then(() => this.props.getPostcards());
+            .then(() => {
+              this.setState(
+                {
+                  isUploadStarted: false,
+                  progress: 0,
+                },
+                () => {
+                  this.props.switchModalAction(false);
+                  this.props.getPostcards();
+                }
+              );
+            });
         });
       }
     );
   }
 
   render() {
-    const { activeStep, steps, imageData } = this.state;
+    const {
+      activeStep,
+      steps,
+      imageData,
+      imageError,
+      progress,
+      senderName,
+      postcardText,
+      isUploadStarted,
+    } = this.state;
     let isNextStepBlocked = true;
-    console.log(this.state.imageData);
     if (activeStep === 0) {
       isNextStepBlocked = !this.props.deviceLocation.length;
     } else if (activeStep === 1) {
       isNextStepBlocked = !imageData.url;
     } else if (activeStep === 2) {
-      isNextStepBlocked = this.state.senderName.value.length < 3;
+      isNextStepBlocked = this.state.senderName.length < 3;
     }
     return (
       <Dialog open={true}>
@@ -219,15 +227,20 @@ class PostcardCreator extends Component {
           />
         )}
         {steps[activeStep].name === "image" && !imageData.url && (
-          <FileInput onChange={(e) => this.handleFileInputChange(e)} />
+          <FileInput
+            onChange={(e) => this.handleFileInputChange(e)}
+            error={imageError}
+          />
         )}
         {steps[activeStep].name === "text" && (
           <PostcardTextContent
             onChange={(stateName, value) =>
               this.onInputChange(stateName, value)
             }
-            name={this.state.senderName}
-            text={this.state.postcardText}
+            name={senderName}
+            text={postcardText}
+            progress={progress}
+            isUploadStarted={isUploadStarted}
           />
         )}
         <Stepper alternativeLabel activeStep={activeStep}>

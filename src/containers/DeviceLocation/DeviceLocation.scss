@@ -1,13 +1,15 @@
 .step-content__container {
+  width: 80vw;
+  max-width: 600px;
   height: 40vh;
+  box-sizing: border-box;
   padding: 16px;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
   &--spinner {
     position: absolute;
     overflow: hidden;
     height: 40vh;
-    padding: 16px 0;
     width: 100%;
     top: 0;
     left: 0;
@@ -24,10 +26,6 @@
   }
 }
 
-.MuiDialog-paperWidthSm {
-  width: 80vw;
-}
-
 .MuiPaper-root.MuiStepper-root.MuiStepper-horizontal.MuiStepper-alternativeLabel.MuiPaper-elevation0 {
-  padding: 24px 16px 16px 16px;
+  padding: 16px;
 }

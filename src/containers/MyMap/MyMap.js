@@ -24,12 +24,13 @@ class MyMap extends Component {
     layer: null,
     position: {
       center: [52, 16],
-      zoom: 8,
+      zoom: 6,
       zoomControl: false,
     },
     isPostcardOpen: false,
     postcardImageLoaded: false,
     postcard: null,
+    layerGroup: null,
   };
 
   static propTypes = {
@@ -44,7 +45,6 @@ class MyMap extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("TODO ::: INFO IF NO POSTCRDS AVAILABLE");
     let prevLen = 0;
     let nextLen = 0;
     if (
@@ -59,7 +59,6 @@ class MyMap extends Component {
     ) {
       prevLen = Object.entries(prevProps.postcardsData).length;
     }
-    console.log("debug ::: ", nextLen, prevLen);
     if (nextLen > prevLen) {
       this.handleAddPostcardMarkers(this.props.postcardsData);
     }
@@ -71,7 +70,11 @@ class MyMap extends Component {
     );
   };
 
-  handleAddPostcardMarkers(postcards) {
+  handleAddPostcardMarkers = (postcards) => {
+    if (this.state.layerGroup) {
+      markers.removeLayer(this.state.layerGroup);
+    }
+
     for (let key in postcards) {
       const { location, date, sender } = postcards[key];
       markers.addLayer(
@@ -80,8 +83,12 @@ class MyMap extends Component {
           .bindTooltip(`From ${sender} on ${date}`, { direction: "top" })
       );
     }
-    markers.addTo(this.map);
-  }
+
+    const layerGroup = L.layerGroup().addTo(this.map);
+
+    markers.addTo(layerGroup);
+    this.setState({ layerGroup });
+  };
 
   handleOpenPostcard(postcard) {
     this.setState({
@@ -92,7 +99,6 @@ class MyMap extends Component {
   }
 
   handleClosePostcard() {
-    console.log("ok ok ok ok");
     this.setState({
       isPostcardOpen: false,
       postcardImageLoaded: false,
@@ -104,11 +110,11 @@ class MyMap extends Component {
     this.props.switchModalAction(true);
   }
 
-  handlePostcardImageLoaded() {
+  handlePostcardImageLoaded = (e) => {
     this.setState({
       postcardImageLoaded: true,
     });
-  }
+  };
 
   render() {
     const { layer, isPostcardOpen, postcard, postcardImageLoaded } = this.state;
@@ -116,11 +122,13 @@ class MyMap extends Component {
       <>
         <div className="my-map__container" id="map-main">
           {!this.props.isModalOpen && (
-            <div style={{ display: "flex" }}>
+            <div className="my-map__dashboard">
               <AddPostcardButton
                 onAddPostcardClick={() => this.handleOpenPostcardCreator()}
               />
-              <h2 className="my-map__title">Send me a postcard</h2>
+              <h2 className="my-map__title">
+                Send me a postcard | My public postcard board
+              </h2>
             </div>
           )}
           {layer && (
@@ -136,7 +144,7 @@ class MyMap extends Component {
             postcard={postcard}
             isLoaded={postcardImageLoaded}
             onClose={() => this.handleClosePostcard()}
-            onImageReady={() => this.handlePostcardImageLoaded()}
+            onImageReady={this.handlePostcardImageLoaded}
           />
         )}
       </>
