@@ -41,7 +41,7 @@ class MyMap extends Component {
   componentDidMount() {
     this.map = L.map("map-main", this.state.position);
     this.handleTileLayer();
-    this.props.getPostcards();
+    // this.props.getPostcards();
   }
 
   componentDidUpdate(prevProps) {

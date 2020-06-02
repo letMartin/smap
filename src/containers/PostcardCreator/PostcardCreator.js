@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
-import firebase from "firebase/app";
-import "firebase/storage";
-import "firebase/database";
 import Resizer from "react-image-file-resizer";
 
 import DeviceLocation from "../DeviceLocation";
@@ -141,62 +138,6 @@ class PostcardCreator extends Component {
   handleBack = () => {
     this.setState({ activeStep: this.state.activeStep - 1 });
   };
-
-  handleSubmitPostcard() {
-    this.setState({ isUploadStarted: true });
-    const { image, width, height } = this.state.imageData;
-    const { senderName, postcardText } = this.state;
-    const filename = `postcard-${Date.now()}`;
-    const storageRef = firebase.storage().ref("/smap-images/" + filename);
-    const uploadTask = storageRef.put(image);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        this.setState({ progress });
-      },
-      (error) => {
-        console.log(error);
-        this.setState({ isUploadStarted: false });
-      },
-      () => {
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          const postcardKey = firebase.database().ref("postcards/").push().key;
-          const date = new Date().toISOString().substring(0, 10);
-          const update = {};
-          const postcard = {
-            sender: senderName.value,
-            content: postcardText.value,
-            location: this.props.deviceLocation,
-            image: {
-              url: downloadURL,
-              width,
-              height,
-            },
-            date,
-          };
-          update["/postcards/" + postcardKey] = postcard;
-          firebase
-            .database()
-            .ref()
-            .update(update)
-            .then(() => {
-              this.setState(
-                {
-                  isUploadStarted: false,
-                  progress: 0,
-                },
-                () => {
-                  this.props.switchModalAction(false);
-                  this.props.getPostcards();
-                }
-              );
-            });
-        });
-      }
-    );
-  }
 
   render() {
     const {

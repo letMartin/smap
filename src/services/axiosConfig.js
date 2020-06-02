@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://send-me-a-postcard.firebaseio.com",
+  baseURL: "localhost:3000",
 });
 
 export default axiosInstance;

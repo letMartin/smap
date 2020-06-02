@@ -34,7 +34,9 @@ const PostcardViewer = ({
         </div>
       )}
       <div className="postcard-viewer__text">
-        <p className="postcard-viewer__text--header">{`From ${postcard.sender} on ${postcard.date}`}</p>
+        <p className="postcard-viewer__text--header">
+          {`From ${postcard.sender} on ${postcard.date}`}
+        </p>
         {postcard.content !== "" && (
           <p className="postcard-viewer__text--content">{postcard.content}</p>
         )}
