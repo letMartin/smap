@@ -3,14 +3,16 @@ import propTypes from "prop-types";
 import L from "leaflet";
 import { initMap } from "../../settings/mapSettings";
 
-import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
-import CustomButton from "../../components/CustomButton/CustomButton";
-import PostcardViewer from "../../components/PostcardViewer/PostcardViewer";
+import Button from "@material-ui/core/Button";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "./MyMap.scss";
+
+import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
+import CustomButton from "../../components/CustomButton/CustomButton";
+import PostcardViewer from "../../components/PostcardViewer/PostcardViewer";
 
 const markers = new L.markerClusterGroup();
 
@@ -116,6 +118,11 @@ class MyMap extends Component {
     });
   };
 
+  handleLogout() {
+    localStorage.removeItem("smapToken");
+    window.location.reload();
+  }
+
   render() {
     const { layer, isPostcardOpen, postcard, postcardImageLoaded } = this.state;
     return (
@@ -123,10 +130,17 @@ class MyMap extends Component {
         <div className="my-map__container" id="map-main">
           {!this.props.isModalOpen && (
             <div className="my-map__dashboard">
-              <AddPostcardButton
-                onAddPostcardClick={() => this.handleOpenPostcardCreator()}
-              />
-              <h2 className="my-map__title">Send me a postcard</h2>
+              <div className="my-map__add-postcard">
+                <AddPostcardButton
+                  onAddPostcardClick={() => this.handleOpenPostcardCreator()}
+                />
+                <h2 className="my-map__title">Send me a postcard</h2>
+              </div>
+              <div className="my-map__logout">
+                <Button onClick={() => this.handleLogout()} color="primary">
+                  Logout
+                </Button>
+              </div>
             </div>
           )}
           {layer && (

@@ -10,21 +10,31 @@
 .my-map__ {
   &dashboard {
     display: flex;
+    justify-content: space-between;
     padding-bottom: 30px;
     width: 100%;
     background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 1),
-      rgba(255, 255, 255, 0)
+      rgba(255, 255, 255, 0.05)
     );
     z-index: 1000;
     position: absolute;
     top: 0;
     left: 0;
   }
+  &add-postcard {
+    display: flex;
+  }
   &title {
     padding: 0 3px;
     border-radius: 3px;
     color: #3f51b5;
+  }
+  &logout {
+    .MuiButton-text {
+      z-index: 1000;
+      margin: 12px;
+    }
   }
 }

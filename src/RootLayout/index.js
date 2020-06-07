@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 const mapStateToProps = (state) => {
   return {
     isModalOpen: state.modal.isModalOpen,
+    isAuth: state.auth.isAuth,
   };
 };
 

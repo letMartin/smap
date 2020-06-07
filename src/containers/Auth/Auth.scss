@@ -1,0 +1,22 @@
+.auth__ {
+  &container {
+    max-width: 500px;
+    margin: 20vh auto;
+  }
+  &buttons {
+    padding: 16px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  &new-user {
+    max-width: 100%;
+    padding: 16px 16px 0 16px;
+  }
+}
+
+.form-control__ {
+  &container {
+    border: 1px solid red;
+    margin-top: 16px;
+  }
+}
