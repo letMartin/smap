@@ -60,6 +60,7 @@ class PostcardCreator extends Component {
     deviceLocation: propTypes.array,
     switchModalAction: propTypes.func,
     getPostcards: propTypes.func,
+    user: propTypes.object,
   };
 
   handleFileInputChange(e) {
@@ -178,6 +179,7 @@ class PostcardCreator extends Component {
             onChange={(stateName, value) =>
               this.onInputChange(stateName, value)
             }
+            user={this.props.user}
             name={senderName}
             text={postcardText}
             progress={progress}

@@ -120,6 +120,7 @@ class MyMap extends Component {
 
   handleLogout() {
     localStorage.removeItem("smapToken");
+    localStorage.removeItem("smapUser");
     window.location.reload();
   }
 

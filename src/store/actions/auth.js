@@ -26,9 +26,11 @@ export const getUser = (token) => {
   return (dispatch) => {
     axios
       .get("/auth/profile", { headers: { Authorization: `Bearer ${token}` } })
-      .then(() => {
+      .then((res) => {
         localStorage.setItem("smapToken", token);
+        localStorage.setItem("smapUser", JSON.stringify(res.data));
         dispatch(authUserAction());
+        dispatch(getUserAction());
         dispatch(mainLoaderSwitchAction(false));
       })
       .catch((err) => {
@@ -58,5 +60,11 @@ export const registerUser = (user) => {
 export const authUserAction = () => {
   return {
     type: actionTypes.AUTH_USER,
+  };
+};
+
+export const getUserAction = () => {
+  return {
+    type: actionTypes.GET_USER,
   };
 };

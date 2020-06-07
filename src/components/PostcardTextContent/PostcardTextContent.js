@@ -14,9 +14,10 @@ const PostcardTextContent = ({
   onChange,
   text,
   name,
-  progress,
+  user,
   isUploadStarted,
 }) => {
+  console.log(user);
   const styles = {
     colorGrey: {
       color: "#ccc",
@@ -28,11 +29,12 @@ const PostcardTextContent = ({
         <FormControl fullWidth>
           <InputLabel htmlFor="input-with-icon-adornment">Name</InputLabel>
           <Input
-            value={name.value}
-            placeholder="Your name"
-            onChange={(e) => onChange(name.key, e.target.value)}
-            autoFocus
-            required
+            value={user.name}
+            // placeholder="Your name"
+            // onChange={(e) => onChange(name.key, e.target.value)}
+            // autoFocus
+            // required
+            readOnly
             fullWidth
             id="input-with-icon-adornment"
             startAdornment={
@@ -72,9 +74,7 @@ const PostcardTextContent = ({
       </form>
       {isUploadStarted && (
         <div className="progress__container">
-          <p className="progress__percent">{progress.toFixed()} %</p>
           <CircularProgress />
-          {progress === 100 && <p>Saving postcard...</p>}
         </div>
       )}
     </div>

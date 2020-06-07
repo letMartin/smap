@@ -18,6 +18,7 @@ export const handleHttpError = (error) => {
     error.response.status === 401
   ) {
     localStorage.removeItem("smapToken");
+    localStorage.removeItem("smapUser");
     setTimeout(() => {
       window.location.reload();
     }, 2137);

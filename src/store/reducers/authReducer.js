@@ -2,6 +2,7 @@ import * as actionTypes from "../actions/actionTypes";
 
 export const initialState = {
   isAuth: !!localStorage.getItem("smapToken"),
+  user: null,
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -10,6 +11,12 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isAuth: !!localStorage.getItem("smapToken"),
+      };
+    }
+    case actionTypes.GET_USER: {
+      return {
+        ...state,
+        user: JSON.parse(localStorage.getItem("smapUser")),
       };
     }
     default: {
