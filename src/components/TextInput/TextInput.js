@@ -6,12 +6,12 @@ import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from "@material-ui/core/InputAdornment";
-// import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 
 const TextInput = ({
   input,
   index,
   inpGroup,
+  disabled,
   isSubmitClicked,
   onInpChange,
   onTogglePassVisibility,
@@ -32,6 +32,7 @@ const TextInput = ({
         placeholder={input.placeholder}
         type={input.type}
         onChange={(e) => onInpChange(e, inpGroup, index)}
+        disabled={disabled}
         autoFocus
         required
         fullWidth
@@ -50,6 +51,12 @@ const TextInput = ({
 
 TextInput.propTypes = {
   input: propTypes.object,
+  index: propTypes.number,
+  inpGroup: propTypes.string,
+  disabled: propTypes.bool,
+  isSubmitClicked: propTypes.bool,
+  onInpChange: propTypes.func,
+  onTogglePassVisibility: propTypes.func,
 };
 
 export default TextInput;

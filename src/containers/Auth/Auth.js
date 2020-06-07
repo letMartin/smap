@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import propTypes from "prop-types";
 import "./Auth.scss";
 
+import { cloneDeep } from "lodash";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
@@ -9,106 +11,118 @@ import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import VpnKeyOutlinedIcon from "@material-ui/icons/VpnKeyOutlined";
 import VisibilityOutlinedIcon from "@material-ui/icons/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@material-ui/icons/VisibilityOffOutlined";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { emailRegExp, passRegExp, nameRegExp } from "../../store/regex";
 
 import TextInput from "../../components/TextInput/TextInput";
 
+const initState = {
+  registerUser: {
+    formKey: "registerUser",
+    isSubmitClicked: false,
+    inpGroup: [
+      {
+        key: "email",
+        type: "email",
+        title: "Email",
+        placeholder: "Enter your email address",
+        regex: emailRegExp,
+        value: "",
+        isValid: false,
+        isSubmitClicked: false,
+        startAdornment: <AlternateEmailIcon />,
+        endAdornment: "",
+      },
+      {
+        key: "password",
+        type: "password",
+        title: "Password",
+        placeholder: "Enter your password",
+        regex: passRegExp,
+        value: "",
+        isValid: false,
+        isSubmitClicked: false,
+        startAdornment: <VpnKeyOutlinedIcon />,
+        endAdornment: <VisibilityOffOutlinedIcon />,
+      },
+      {
+        key: "name",
+        type: "text",
+        title: "Name",
+        placeholder: "Enter your Name",
+        regex: nameRegExp,
+        value: "",
+        isValid: false,
+        isSubmitClicked: false,
+        startAdornment: <PersonOutlinedIcon />,
+        endAdornment: null,
+      },
+      {
+        key: "Surname",
+        type: "text",
+        title: "Surname",
+        placeholder: "Enter your surname",
+        regex: nameRegExp,
+        value: "",
+        isValid: false,
+        isSubmitClicked: false,
+        startAdornment: <PersonOutlinedIcon />,
+        endAdornment: null,
+      },
+    ],
+  },
+  authUser: {
+    formKey: "authUser",
+    isSubmitClicked: false,
+    inpGroup: [
+      {
+        key: "email",
+        type: "text",
+        title: "Email",
+        placeholder: "Enter your email address",
+        regex: emailRegExp,
+        value: "",
+        isValid: false,
+        startAdornment: <AlternateEmailIcon />,
+        endAdornment: null,
+      },
+      {
+        key: "password",
+        type: "password",
+        title: "Password",
+        placeholder: "Enter your password",
+        regex: passRegExp,
+        value: "",
+        isValid: false,
+        startAdornment: <VpnKeyOutlinedIcon />,
+        endAdornment: <VisibilityOffOutlinedIcon />,
+      },
+    ],
+  },
+  isLoginClicked: false,
+};
+
 class Auth extends Component {
-  state = {
-    registerUser: {
-      formKey: "registerUser",
-      isSubmitClicked: false,
-      inpGroup: [
-        {
-          key: "email",
-          type: "email",
-          title: "Email",
-          placeholder: "Enter your email address",
-          regex: emailRegExp,
-          value: "",
-          isValid: false,
-          isSubmitClicked: false,
-          startAdornment: <AlternateEmailIcon />,
-          endAdornment: "",
-        },
-        {
-          key: "password",
-          type: "password",
-          title: "Password",
-          placeholder: "Enter your password",
-          regex: passRegExp,
-          value: "",
-          isValid: false,
-          isSubmitClicked: false,
-          startAdornment: <VpnKeyOutlinedIcon />,
-          endAdornment: <VisibilityOffOutlinedIcon />,
-        },
-        {
-          key: "name",
-          type: "text",
-          title: "Name",
-          placeholder: "Enter your Name",
-          regex: nameRegExp,
-          value: "",
-          isValid: false,
-          isSubmitClicked: false,
-          startAdornment: <PersonOutlinedIcon />,
-          endAdornment: null,
-        },
-        {
-          key: "Surname",
-          type: "text",
-          title: "Surname",
-          placeholder: "Enter your surname",
-          regex: nameRegExp,
-          value: "",
-          isValid: false,
-          isSubmitClicked: false,
-          startAdornment: <PersonOutlinedIcon />,
-          endAdornment: null,
-        },
-      ],
-    },
-    authUser: {
-      formKey: "authUser",
-      isSubmitClicked: false,
-      inpGroup: [
-        {
-          key: "email",
-          type: "text",
-          title: "Email",
-          placeholder: "Enter your email address",
-          regex: emailRegExp,
-          value: "",
-          isValid: false,
-          startAdornment: <AlternateEmailIcon />,
-          endAdornment: null,
-        },
-        {
-          key: "password",
-          type: "password",
-          title: "Password",
-          placeholder: "Enter your password",
-          regex: passRegExp,
-          value: "",
-          isValid: false,
-          startAdornment: <VpnKeyOutlinedIcon />,
-          endAdornment: <VisibilityOffOutlinedIcon />,
-        },
-      ],
-    },
-    isUserModalOpen: false,
-    isLoginClicked: false,
-  };
+  state = cloneDeep(initState);
 
   static propTypes = {
     authUser: propTypes.func,
     registerUser: propTypes.func,
+    switchUserModalAction: propTypes.func,
+    isUserModalOpen: propTypes.bool,
+    isMainLoaderOn: propTypes.bool,
   };
 
-  handleToggleUserModal(isUserModalOpen) {
-    this.setState({ isUserModalOpen });
+  componentDidUpdate(prevProps) {
+    if (prevProps.isUserModalOpen && !this.props.isUserModalOpen) {
+      const registerUser = cloneDeep(initState.registerUser);
+      this.setState({ registerUser });
+    }
+  }
+
+  handleToggleUserModal(shouldOpen) {
+    this.props.switchUserModalAction(shouldOpen);
   }
 
   handleInputChange = (e, inpKey, index) => {
@@ -197,6 +211,7 @@ class Auth extends Component {
 
   render() {
     const { authUser, registerUser } = this.state;
+    const { isMainLoaderOn } = this.props;
     return (
       <div className="auth__container">
         <form autoComplete="off">
@@ -206,6 +221,7 @@ class Auth extends Component {
               key={inp.key}
               inpGroup={authUser.formKey}
               index={index}
+              disabled={isMainLoaderOn}
               isSubmitClicked={authUser.isSubmitClicked}
               onTogglePassVisibility={this.togglePassVisibility}
               onInpChange={this.handleInputChange}
@@ -213,18 +229,22 @@ class Auth extends Component {
           ))}
         </form>
         <div className="auth__buttons">
-          <Button onClick={() => this.handleToggleUserModal(true)}>
+          <Button
+            onClick={() => this.handleToggleUserModal(true)}
+            disabled={isMainLoaderOn}
+          >
             Create new user
           </Button>
           <Button
             variant="contained"
             color="primary"
+            disabled={isMainLoaderOn}
             onClick={() => this.handleUserAuth()}
           >
             Log in
           </Button>
         </div>
-        <Dialog open={this.state.isUserModalOpen}>
+        <Dialog open={this.props.isUserModalOpen}>
           <div className="auth__new-user">
             <form>
               {registerUser.inpGroup.map((inp, index) => (
@@ -232,6 +252,7 @@ class Auth extends Component {
                   input={inp}
                   key={inp.key + index}
                   index={index}
+                  disabled={isMainLoaderOn}
                   inpGroup={registerUser.formKey}
                   isSubmitClicked={registerUser.isSubmitClicked}
                   onTogglePassVisibility={this.togglePassVisibility}
@@ -240,16 +261,25 @@ class Auth extends Component {
               ))}
             </form>
             <div className="auth__buttons">
-              <Button onClick={() => this.handleToggleUserModal(false)}>
+              <Button
+                onClick={() => this.handleToggleUserModal(false)}
+                disabled={isMainLoaderOn}
+              >
                 Cancel
               </Button>
               <Button
                 variant="contained"
                 color="primary"
+                disabled={isMainLoaderOn}
                 onClick={() => this.handleUserRegister()}
               >
                 Save
               </Button>
+              {isMainLoaderOn && (
+                <div className="auth__new-user--loader">
+                  <CircularProgress />
+                </div>
+              )}
             </div>
           </div>
         </Dialog>

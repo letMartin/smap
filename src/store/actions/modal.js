@@ -7,6 +7,14 @@ export const switchModalAction = (data) => {
   };
 };
 
+export const switchUserModalAction = (data) => {
+  return {
+    type: actionTypes.SWITCH_USER_MODAL,
+    data,
+  };
+};
+
 export const actions = {
-  switchModalAction
+  switchModalAction,
+  switchUserModalAction,
 };
