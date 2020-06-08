@@ -17,7 +17,6 @@ const PostcardTextContent = ({
   user,
   isUploadStarted,
 }) => {
-  console.log(user);
   const styles = {
     colorGrey: {
       color: "#ccc",
@@ -30,21 +29,12 @@ const PostcardTextContent = ({
           <InputLabel htmlFor="input-with-icon-adornment">Name</InputLabel>
           <Input
             value={user.name}
-            // placeholder="Your name"
-            // onChange={(e) => onChange(name.key, e.target.value)}
-            // autoFocus
-            // required
             readOnly
             fullWidth
             id="input-with-icon-adornment"
             startAdornment={
               <InputAdornment position="start">
                 <PersonOutlinedIcon />
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment position="end" style={styles.colorGrey}>
-                {name.maxLength - name.length}
               </InputAdornment>
             }
           />

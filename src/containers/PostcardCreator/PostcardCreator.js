@@ -2,11 +2,6 @@ import React, { Component } from "react";
 import propTypes from "prop-types";
 import Resizer from "react-image-file-resizer";
 
-import DeviceLocation from "../DeviceLocation";
-import ImageViewer from "../../components/ImageViewer/ImageViewer";
-import PostcardTextContent from "../../components/PostcardTextContent/PostcardTextContent";
-import FileInput from "../../components/FileInput/Fileinput";
-
 import Dialog from "@material-ui/core/Dialog";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -16,8 +11,24 @@ import ImageIcon from "@material-ui/icons/Image";
 import CreateIcon from "@material-ui/icons/Create";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
+import IconButton from "@material-ui/core/IconButton";
+import ClearOutlinedIcon from "@material-ui/icons/ClearOutlined";
+
+import DeviceLocation from "../DeviceLocation";
+import ImageViewer from "../../components/ImageViewer/ImageViewer";
+import PostcardTextContent from "../../components/PostcardTextContent/PostcardTextContent";
+import FileInput from "../../components/FileInput/Fileinput";
+
+import { saveImage } from "../../store/actions/postcards";
 
 import "./PostcardCreator.scss";
+
+const clearBthStyle = {
+  position: "absolute",
+  top: "0",
+  right: "0",
+  zIndex: "10",
+};
 
 const icons = {
   0: <LocationOnIcon />,
@@ -36,8 +47,6 @@ class PostcardCreator extends Component {
     senderName: {
       key: "senderName",
       value: "",
-      length: 0,
-      maxLength: 20,
     },
     postcardText: {
       key: "postcardText",
@@ -65,6 +74,7 @@ class PostcardCreator extends Component {
 
   handleFileInputChange(e) {
     const image = e.target.files[0];
+    const fileZero = e.target.files[0];
     const size = this.getImageSize(image);
     if (size > 10000) {
       this.setState({ imageError: "Can't upload images larger than 10 MB" });
@@ -82,6 +92,7 @@ class PostcardCreator extends Component {
         "blob"
       );
     }
+    this.setState({ fileZero });
   }
 
   getImageSize(image) {
@@ -109,10 +120,19 @@ class PostcardCreator extends Component {
     const imageData = { ...this.state.imageData };
     imageData.height = e.target.height;
     imageData.width = e.target.width;
-    console.log(imageData);
     this.setState({
       imageData,
     });
+  }
+
+  handleImageClear() {
+    const imageData = {
+      image: null,
+      url: null,
+      height: 0,
+      width: 0,
+    };
+    this.setState({ imageData });
   }
 
   onInputChange(stateName, value) {
@@ -130,7 +150,7 @@ class PostcardCreator extends Component {
 
   handleNext = () => {
     if (this.state.activeStep === this.state.steps.length - 1) {
-      this.handleSubmitPostcard();
+      this.submitPostcard();
     } else {
       this.setState({ activeStep: this.state.activeStep + 1 });
     }
@@ -140,6 +160,10 @@ class PostcardCreator extends Component {
     this.setState({ activeStep: this.state.activeStep - 1 });
   };
 
+  submitPostcard = () => {
+    saveImage(this.state.fileZero);
+  };
+
   render() {
     const {
       activeStep,
@@ -147,7 +171,6 @@ class PostcardCreator extends Component {
       imageData,
       imageError,
       progress,
-      senderName,
       postcardText,
       isUploadStarted,
     } = this.state;
@@ -163,10 +186,22 @@ class PostcardCreator extends Component {
       <Dialog open={true}>
         {steps[activeStep].name === "location" && <DeviceLocation />}
         {steps[activeStep].name === "image" && imageData.url && (
-          <ImageViewer
-            imageData={imageData}
-            onImageLoaded={(e) => this.handleImageLoaded(e)}
-          />
+          <>
+            <IconButton
+              style={clearBthStyle}
+              onClick={() => this.handleImageClear()}
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+            >
+              <ClearOutlinedIcon color="error" />
+            </IconButton>
+            <ImageViewer
+              imageData={imageData}
+              onImageLoaded={(e) => this.handleImageLoaded(e)}
+              onImageClear={() => this.handleImageClear()}
+            />
+          </>
         )}
         {steps[activeStep].name === "image" && !imageData.url && (
           <FileInput
@@ -180,7 +215,6 @@ class PostcardCreator extends Component {
               this.onInputChange(stateName, value)
             }
             user={this.props.user}
-            name={senderName}
             text={postcardText}
             progress={progress}
             isUploadStarted={isUploadStarted}

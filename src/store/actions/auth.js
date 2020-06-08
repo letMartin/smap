@@ -27,11 +27,11 @@ export const getUser = (token) => {
     axios
       .get("/auth/profile", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
+        dispatch(mainLoaderSwitchAction(false));
         localStorage.setItem("smapToken", token);
         localStorage.setItem("smapUser", JSON.stringify(res.data));
-        dispatch(authUserAction());
         dispatch(getUserAction());
-        dispatch(mainLoaderSwitchAction(false));
+        dispatch(authUserAction());
       })
       .catch((err) => {
         handleHttpError(err);

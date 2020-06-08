@@ -25,6 +25,19 @@ export const sendPostcard = (postcard) => {
   };
 };
 
+export const saveImage = (file) => {
+  const data = new FormData();
+  data.append("data", file);
+  axios
+    .post("/files/upload", data)
+    .then((res) => {
+      console.log("Image saved ", res);
+    })
+    .catch((error) => {
+      console.log("Error image not saved ", error);
+    });
+};
+
 export const getPostcardsAction = (data) => {
   return {
     type: actionTypes.GET_POSTCARDS,

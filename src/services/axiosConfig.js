@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
-});
+export const token = localStorage.getItem("smapToken");
 
-export default axiosInstance;
+axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.headers.common = { Authorization: `bearer ${token}` };
+
+export default axios;
