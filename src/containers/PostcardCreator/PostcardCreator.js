@@ -74,7 +74,6 @@ class PostcardCreator extends Component {
 
   handleFileInputChange(e) {
     const image = e.target.files[0];
-    const fileZero = e.target.files[0];
     const size = this.getImageSize(image);
     if (size > 10000) {
       this.setState({ imageError: "Can't upload images larger than 10 MB" });
@@ -92,7 +91,6 @@ class PostcardCreator extends Component {
         "blob"
       );
     }
-    this.setState({ fileZero });
   }
 
   getImageSize(image) {
@@ -114,15 +112,6 @@ class PostcardCreator extends Component {
         },
       });
     };
-  }
-
-  handleImageLoaded(e) {
-    const imageData = { ...this.state.imageData };
-    imageData.height = e.target.height;
-    imageData.width = e.target.width;
-    this.setState({
-      imageData,
-    });
   }
 
   handleImageClear() {
@@ -198,7 +187,6 @@ class PostcardCreator extends Component {
             </IconButton>
             <ImageViewer
               imageData={imageData}
-              onImageLoaded={(e) => this.handleImageLoaded(e)}
               onImageClear={() => this.handleImageClear()}
             />
           </>
