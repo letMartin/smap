@@ -14,8 +14,8 @@ const ImageViewer = ({ imageData }) => {
   let imgStyle = null;
 
   useEffect(() => {
-    setHeight(ref.current.clientHeight - 32);
-    setWidth(ref.current.clientWidth - 32);
+    setHeight(ref.current.clientHeight - 20);
+    setWidth(ref.current.clientWidth - 20);
   }, []);
 
   if (url) {
