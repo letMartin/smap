@@ -1,11 +1,9 @@
 import React from "react";
 import propTypes from "prop-types";
 
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
+// import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -13,8 +11,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 const PostcardTextContent = ({
   onChange,
   text,
-  name,
-  user,
+  users,
+  receivers,
+  maxReceivers,
+  onMultiChange,
   isUploadStarted,
 }) => {
   const styles = {
@@ -22,23 +22,31 @@ const PostcardTextContent = ({
       color: "#ccc",
     },
   };
+  const leftToAdd = maxReceivers - receivers.length;
+  const placeholder = leftToAdd
+    ? `Can add ${leftToAdd} more`
+    : `No more receivers can be added`;
+  const userNames = receivers.length >= maxReceivers ? [] : users;
+
   return (
     <div className="step-content__container ">
-      <form autoComplete="off">
-        <FormControl fullWidth>
-          <InputLabel htmlFor="input-with-icon-adornment">Name</InputLabel>
-          <Input
-            value={user.name}
-            readOnly
-            fullWidth
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <PersonOutlinedIcon />
-              </InputAdornment>
-            }
-          />
-        </FormControl>
+      <form>
+        <Autocomplete
+          multiple
+          id="tags-standard"
+          options={userNames}
+          onChange={onMultiChange}
+          getOptionLabel={(option) => option.title}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              disabled={receivers.length >= 2}
+              variant="standard"
+              label="Select receivers"
+              placeholder={placeholder}
+            />
+          )}
+        />
         <TextField
           value={text.value}
           placeholder="You can drop me a line, but it's optional"
@@ -74,9 +82,10 @@ const PostcardTextContent = ({
 PostcardTextContent.propTypes = {
   onChange: propTypes.func,
   text: propTypes.object,
-  name: propTypes.object,
-  progress: propTypes.number,
+  users: propTypes.array,
+  receivers: propTypes.array,
   isUploadStarted: propTypes.bool,
+  maxReceivers: propTypes.number,
 };
 
 export default PostcardTextContent;

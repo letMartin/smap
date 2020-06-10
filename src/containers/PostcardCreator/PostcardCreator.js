@@ -61,16 +61,39 @@ class PostcardCreator extends Component {
       { name: "text", label: "Text" },
     ],
     imageError: "",
-    progress: 0,
     isUploadStarted: false,
+    users: [],
+    receivers: [],
+    maxReceivers: 10,
   };
 
   static propTypes = {
     deviceLocation: propTypes.array,
+    usersList: propTypes.array,
     switchModalAction: propTypes.func,
     getPostcards: propTypes.func,
+    sendPostcard: propTypes.func,
+    getUsers: propTypes.func,
     user: propTypes.object,
   };
+
+  componentDidMount() {
+    this.props.getUsers();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { usersList } = this.props;
+    if (prevProps.usersList.length < usersList.length && usersList.length > 0) {
+      const users = usersList.map((user) => {
+        return {
+          title: `${user.name} ${user.surname}`,
+          id: user.userId,
+        };
+      });
+
+      this.setState({ users });
+    }
+  }
 
   handleFileInputChange(e) {
     const image = e.target.files[0];
@@ -99,7 +122,7 @@ class PostcardCreator extends Component {
   }
 
   handleNewImgFile(blob) {
-    const filename = `postcard-${Date.now()}`;
+    const filename = `postcard-${Date.now()}.jpeg`;
     const image = new File([blob], filename, { type: "image/jpeg" });
     const reader = new FileReader();
     reader.readAsDataURL(image);
@@ -137,6 +160,10 @@ class PostcardCreator extends Component {
     });
   }
 
+  handleMultiChange(e, val) {
+    this.setState({ receivers: val });
+  }
+
   handleNext = () => {
     if (this.state.activeStep === this.state.steps.length - 1) {
       this.submitPostcard();
@@ -150,7 +177,21 @@ class PostcardCreator extends Component {
   };
 
   submitPostcard = () => {
-    saveImage(this.state.fileZero);
+    const { imageData, postcardText, receivers } = this.state;
+    const { user, deviceLocation, sendPostcard } = this.props;
+
+    saveImage(imageData.image).then((res) => {
+      const { fileId } = res.data;
+      const postcard = {
+        fileId,
+        content: postcardText.value,
+        senderId: user.userId,
+        receiverId: receivers[0].id,
+        localization: deviceLocation,
+      };
+
+      sendPostcard(postcard);
+    });
   };
 
   render() {
@@ -159,7 +200,6 @@ class PostcardCreator extends Component {
       steps,
       imageData,
       imageError,
-      progress,
       postcardText,
       isUploadStarted,
     } = this.state;
@@ -202,9 +242,11 @@ class PostcardCreator extends Component {
             onChange={(stateName, value) =>
               this.onInputChange(stateName, value)
             }
-            user={this.props.user}
+            onMultiChange={(e, val) => this.handleMultiChange(e, val)}
+            users={this.state.users}
+            receivers={this.state.receivers}
+            maxReceivers={this.state.maxReceivers}
             text={postcardText}
-            progress={progress}
             isUploadStarted={isUploadStarted}
           />
         )}

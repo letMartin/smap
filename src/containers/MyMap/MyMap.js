@@ -36,33 +36,19 @@ class MyMap extends Component {
   };
 
   static propTypes = {
-    postcardsData: propTypes.object,
+    postcards: propTypes.array,
     isModalOpen: propTypes.bool,
   };
 
   componentDidMount() {
     this.map = L.map("map-main", this.state.position);
     this.handleTileLayer();
-    // this.props.getPostcards();
+    this.props.getPostcards();
   }
 
   componentDidUpdate(prevProps) {
-    let prevLen = 0;
-    let nextLen = 0;
-    if (
-      this.props.postcardsData !== null &&
-      Object.entries(this.props.postcardsData).length > 0
-    ) {
-      nextLen = Object.entries(this.props.postcardsData).length;
-    }
-    if (
-      prevProps.postcardsData !== null &&
-      Object.entries(prevProps.postcardsData).length > 0
-    ) {
-      prevLen = Object.entries(prevProps.postcardsData).length;
-    }
-    if (nextLen > prevLen) {
-      this.handleAddPostcardMarkers(this.props.postcardsData);
+    if (this.props.postcards > prevProps.postcards) {
+      this.handleAddPostcardMarkers(this.props.postcards);
     }
   }
 
@@ -77,14 +63,15 @@ class MyMap extends Component {
       markers.removeLayer(this.state.layerGroup);
     }
 
-    for (let key in postcards) {
-      const { location, date, sender } = postcards[key];
+    postcards.forEach((postcard) => {
+      const { localization, updatedAt: date, sender } = postcard;
+
       markers.addLayer(
-        L.marker(location, { icon: mailIcon })
-          .on("click", () => this.handleOpenPostcard(postcards[key]))
-          .bindTooltip(`${sender} on ${date}`, { direction: "top" })
+        L.marker(localization, { icon: mailIcon })
+          .on("click", () => this.handleOpenPostcard(postcards))
+          .bindTooltip(`${sender.userId} on ${date}`, { direction: "top" })
       );
-    }
+    });
 
     const layerGroup = L.layerGroup().addTo(this.map);
 

@@ -1,15 +1,15 @@
 import * as actionTypes from "../actions/actionTypes";
 
 export const initialState = {
-  postcards: [],
+  usersList: [],
 };
 
-export const postcardsReducer = (state = initialState, action) => {
+export const usersReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.GET_POSTCARDS: {
+    case actionTypes.GET_USERS: {
       return {
         ...state,
-        postcards: action.data,
+        usersList: action.data,
       };
     }
     default: {
@@ -18,4 +18,4 @@ export const postcardsReducer = (state = initialState, action) => {
   }
 };
 
-export default postcardsReducer;
+export default usersReducer;

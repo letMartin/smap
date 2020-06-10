@@ -4,6 +4,7 @@ import mainLoaderReducer from "./mainLoaderReducer";
 import modalReducer from "./modalReducer";
 import locationsReducer from "./locationsReducer";
 import authReducer from "./authReducer";
+import usersReducer from "./usersReducer";
 
 export const rootReducer = combineReducers({
   postcards: postcardsReducer,
@@ -11,6 +12,7 @@ export const rootReducer = combineReducers({
   modal: modalReducer,
   locations: locationsReducer,
   auth: authReducer,
+  users: usersReducer,
 });
 
 export default rootReducer;

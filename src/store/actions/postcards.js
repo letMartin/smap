@@ -1,10 +1,10 @@
 import * as actionTypes from "./actionTypes";
-import axios from "../../services/axiosConfig";
+import axios, { getHeaders } from "../../services/axiosConfig";
 
 export const getPostcards = () => {
   return (dispatch) => {
     axios
-      .get("/postcards.json")
+      .get("/postcards", getHeaders())
       .then((res) => {
         dispatch(getPostcardsAction(res.data));
       })
@@ -17,25 +17,30 @@ export const getPostcards = () => {
 export const sendPostcard = (postcard) => {
   return (dispatch) => {
     axios
-      .post("/postcards.json", postcard)
-      .then(() => {})
+      .post("/postcards", postcard, getHeaders())
+      .then((res) => {
+        console.log(res);
+      })
       .catch((error) => {
         console.log(error);
       });
   };
 };
 
-export const saveImage = (file) => {
+export const saveImage = (imgFile) => {
   const data = new FormData();
-  data.append("data", file);
-  axios
-    .post("/files/upload", data)
-    .then((res) => {
-      console.log("Image saved ", res);
-    })
-    .catch((error) => {
-      console.log("Error image not saved ", error);
-    });
+  data.append("file", imgFile);
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/files/upload", data, getHeaders())
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((error) => {
+        console.log("Error image not saved ", error);
+        reject(error);
+      });
+  });
 };
 
 export const getPostcardsAction = (data) => {
@@ -54,5 +59,4 @@ export const mainLoaderSwitchAction = (data) => {
 
 export const actions = {
   getPostcards,
-  sendPostcard,
 };
