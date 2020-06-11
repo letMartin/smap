@@ -3,8 +3,6 @@ import propTypes from "prop-types";
 import L from "leaflet";
 import { initMap } from "../../settings/mapSettings";
 
-import Button from "@material-ui/core/Button";
-
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
@@ -64,11 +62,12 @@ class MyMap extends Component {
     }
 
     postcards.forEach((postcard) => {
-      const { localization, updatedAt: date, sender } = postcard;
+      const { localization, updatedAt, sender } = postcard;
+      const date = new Date(updatedAt).toISOString().split("T")[0];
 
       markers.addLayer(
         L.marker(localization, { icon: mailIcon })
-          .on("click", () => this.handleOpenPostcard(postcards))
+          .on("click", () => this.handleOpenPostcard(postcard))
           .bindTooltip(`${sender.userId} on ${date}`, { direction: "top" })
       );
     });
@@ -105,12 +104,6 @@ class MyMap extends Component {
     });
   };
 
-  handleLogout() {
-    localStorage.removeItem("smapToken");
-    localStorage.removeItem("smapUser");
-    window.location.reload();
-  }
-
   render() {
     const { layer, isPostcardOpen, postcard, postcardImageLoaded } = this.state;
     return (
@@ -123,11 +116,6 @@ class MyMap extends Component {
                   onAddPostcardClick={() => this.handleOpenPostcardCreator()}
                 />
                 <h2 className="my-map__title">Send me a postcard</h2>
-              </div>
-              <div className="my-map__logout">
-                <Button onClick={() => this.handleLogout()} color="primary">
-                  Logout
-                </Button>
               </div>
             </div>
           )}

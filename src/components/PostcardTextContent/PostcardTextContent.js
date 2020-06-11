@@ -3,8 +3,8 @@ import propTypes from "prop-types";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import InputAdornment from "@material-ui/core/InputAdornment";
-// import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import CreateOutlinedIcon from "@material-ui/icons/CreateOutlined";
+import AlternateEmailOutlinedIcon from "@material-ui/icons/AlternateEmailOutlined";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -23,9 +23,10 @@ const PostcardTextContent = ({
     },
   };
   const leftToAdd = maxReceivers - receivers.length;
-  const placeholder = leftToAdd
-    ? `Can add ${leftToAdd} more`
-    : `No more receivers can be added`;
+  const placeholder =
+    leftToAdd < maxReceivers
+      ? String(leftToAdd)
+      : `Max ${maxReceivers} receivers`;
   const userNames = receivers.length >= maxReceivers ? [] : users;
 
   return (
@@ -44,6 +45,17 @@ const PostcardTextContent = ({
               variant="standard"
               label="Select receivers"
               placeholder={placeholder}
+              InputProps={{
+                ...params.InputProps,
+                startAdornment: (
+                  <>
+                    <InputAdornment position="start">
+                      <AlternateEmailOutlinedIcon />
+                    </InputAdornment>
+                    {params.InputProps.startAdornment}
+                  </>
+                ),
+              }}
             />
           )}
         />

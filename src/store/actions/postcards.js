@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios, { getHeaders } from "../../services/axiosConfig";
+import { handleHttpError } from "../../utilities/httpErrors";
 
 export const getPostcards = () => {
   return (dispatch) => {
@@ -9,7 +10,7 @@ export const getPostcards = () => {
         dispatch(getPostcardsAction(res.data));
       })
       .catch((error) => {
-        console.log(error);
+        handleHttpError(error);
       });
   };
 };
@@ -22,7 +23,7 @@ export const sendPostcard = (postcard) => {
         console.log(res);
       })
       .catch((error) => {
-        console.log(error);
+        handleHttpError(error);
       });
   };
 };
@@ -37,7 +38,7 @@ export const saveImage = (imgFile) => {
         resolve(res);
       })
       .catch((error) => {
-        console.log("Error image not saved ", error);
+        handleHttpError(error);
         reject(error);
       });
   });

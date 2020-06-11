@@ -11,9 +11,15 @@ import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import VpnKeyOutlinedIcon from "@material-ui/icons/VpnKeyOutlined";
 import VisibilityOutlinedIcon from "@material-ui/icons/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@material-ui/icons/VisibilityOffOutlined";
+import HowToRegOutlinedIcon from "@material-ui/icons/HowToRegOutlined";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import { emailRegExp, passRegExp, nameRegExp } from "../../store/regex";
+import {
+  emailRegExp,
+  passRegExp,
+  nameRegExp,
+  genderRegExp,
+} from "../../store/regex";
 
 import TextInput from "../../components/TextInput/TextInput";
 
@@ -69,6 +75,17 @@ const initState = {
         isSubmitClicked: false,
         startAdornment: <PersonOutlinedIcon />,
         endAdornment: null,
+      },
+      {
+        key: "Gender",
+        type: "select",
+        title: "Gender",
+        value: "OTHER",
+        regex: genderRegExp,
+        isValid: true,
+        startAdornment: <HowToRegOutlinedIcon />,
+        endAdornment: null,
+        options: ["MALE", "FEMALE", "OTHER"],
       },
     ],
   },
@@ -190,7 +207,7 @@ class Auth extends Component {
         password: inputs[1].value,
         name: inputs[2].value,
         surname: inputs[3].value,
-        gender: "MALE",
+        gender: inputs[4].value,
       };
       this.createUser(user);
     }

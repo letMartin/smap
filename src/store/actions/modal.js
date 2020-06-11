@@ -14,7 +14,15 @@ export const switchUserModalAction = (data) => {
   };
 };
 
+export const switchUserEditorAction = (data) => {
+  return {
+    type: actionTypes.SWITCH_USER_EDIT_MODAL,
+    data,
+  };
+};
+
 export const actions = {
   switchModalAction,
   switchUserModalAction,
+  switchUserEditorAction,
 };

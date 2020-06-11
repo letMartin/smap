@@ -12,21 +12,18 @@ const PostcardViewer = ({
   onClose,
   isLoaded,
 }) => {
-  const { width, height } = postcard.image;
-  let imgWidth = width;
-  let imgHeight = height;
-  if (isLoaded) {
-    imgWidth = "100%";
-    imgHeight = "100%";
-  }
   return (
     <Dialog
       open={open}
       onClose={onClose}
       className="postcard-viewer__container"
     >
-      <div style={{ width: imgWidth, height: imgHeight }}>
-        <img src={postcard.image.url} alt="" onLoad={onImageReady} />
+      <div>
+        <img
+          src="https://images.unsplash.com/photo-1526080676457-4544bf0ebba9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"
+          alt=""
+          onLoad={onImageReady}
+        />
       </div>
       {!isLoaded && (
         <div className="postcard-viewer__progress">
@@ -35,7 +32,9 @@ const PostcardViewer = ({
       )}
       <div className="postcard-viewer__text">
         <p className="postcard-viewer__text--header">
-          {`From ${postcard.sender} on ${postcard.date}`}
+          {`From ${postcard.sender.userId} on ${
+            new Date(postcard.updatedAt).toISOString().split("T")[0]
+          }`}
         </p>
         {postcard.content !== "" && (
           <p className="postcard-viewer__text--content">{postcard.content}</p>

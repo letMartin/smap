@@ -5,6 +5,7 @@ import RootLayout from "./RootLayout";
 const mapStateToProps = (state) => {
   return {
     isModalOpen: state.modal.isModalOpen,
+    isUserEditModalOpen: state.modal.isUserEditModalOpen,
     isAuth: state.auth.isAuth,
     isMainLoaderOn: state.mainLoader.isMainLoaderOn,
   };

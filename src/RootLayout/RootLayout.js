@@ -6,6 +6,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Auth from "../containers/Auth";
 import MyMap from "../containers/MyMap";
 import PostcardCreator from "../containers/PostcardCreator";
+import UserMenu from "../containers/UserMenu";
+import UserEditor from "../containers/UserEditor";
 
 import "./RootLayout.scss";
 
@@ -15,16 +17,19 @@ class RootLayout extends Component {
     isModalOpen: PropTypes.bool,
     isAuth: PropTypes.bool,
     isMainLoaderOn: PropTypes.bool,
+    isUserEditModalOpen: PropTypes.bool,
   };
 
   render() {
-    const { isAuth } = this.props;
+    const { isAuth, isUserEditModalOpen } = this.props;
 
     return (
       <div className="root-layout__container">
         {isAuth ? (
           <div>
             <MyMap />
+            <UserMenu />
+            {isUserEditModalOpen && <UserEditor />}
             {this.props.isModalOpen && <PostcardCreator />}
           </div>
         ) : (
