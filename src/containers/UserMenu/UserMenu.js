@@ -6,15 +6,18 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
 import "./UserMenu.scss";
+import ProfileViewer from "../../components/ProfileViewer/ProfileViewer";
 
 class UserMenu extends Component {
   state = {
     anchorEl: null,
+    isProfileOpen: false,
   };
 
   static propTypes = {
     isMainLoaderOn: propTypes.bool,
     switchUserEditorAction: propTypes.func,
+    user: propTypes.object,
   };
 
   handleClick = ({ currentTarget }) => {
@@ -33,6 +36,10 @@ class UserMenu extends Component {
 
   handleInputChange(e) {
     console.log(e.currentTarget.value);
+  }
+
+  handleToggleProfile(isOpen) {
+    this.setState({ isProfileOpen: isOpen });
   }
 
   render() {
@@ -54,7 +61,9 @@ class UserMenu extends Component {
             open={Boolean(this.state.anchorEl)}
             onClose={this.handleClose}
           >
-            <MenuItem onClick={this.handleClose}>My profile</MenuItem>
+            <MenuItem onClick={() => this.handleToggleProfile(true)}>
+              My profile
+            </MenuItem>
             <MenuItem onClick={() => this.props.switchUserEditorAction(true)}>
               Edit account
             </MenuItem>
@@ -62,6 +71,11 @@ class UserMenu extends Component {
             <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
           </Menu>
         </div>
+        <ProfileViewer
+          isOpen={this.state.isProfileOpen}
+          user={this.props.user}
+          onClose={(isOpen) => this.handleToggleProfile(isOpen)}
+        />
       </>
     );
   }

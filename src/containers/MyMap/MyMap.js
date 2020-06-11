@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
 import L from "leaflet";
-import { initMap } from "../../settings/mapSettings";
+import moment from "moment";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import "./MyMap.scss";
 
+import "./MyMap.scss";
+import { initMap } from "../../settings/mapSettings";
 import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import PostcardViewer from "../../components/PostcardViewer/PostcardViewer";
@@ -63,7 +64,7 @@ class MyMap extends Component {
 
     postcards.forEach((postcard) => {
       const { localization, updatedAt, sender } = postcard;
-      const date = new Date(updatedAt).toISOString().split("T")[0];
+      const date = moment(updatedAt).format("DD MMMM YYYY");
 
       markers.addLayer(
         L.marker(localization, { icon: mailIcon })

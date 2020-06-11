@@ -1,9 +1,11 @@
 import React from "react";
 import propTypes from "prop-types";
-import "./PostcardViewer.scss";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import moment from "moment";
 
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
+
+import "./PostcardViewer.scss";
 
 const PostcardViewer = ({
   open,
@@ -32,9 +34,9 @@ const PostcardViewer = ({
       )}
       <div className="postcard-viewer__text">
         <p className="postcard-viewer__text--header">
-          {`From ${postcard.sender.userId} on ${
-            new Date(postcard.updatedAt).toISOString().split("T")[0]
-          }`}
+          {`From ${postcard.sender.userId} on ${moment(
+            postcard.updatedAt
+          ).format("DD MMMM YYYY")}`}
         </p>
         {postcard.content !== "" && (
           <p className="postcard-viewer__text--content">{postcard.content}</p>

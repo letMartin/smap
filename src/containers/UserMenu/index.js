@@ -10,6 +10,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => {
   return {
     isMainLoaderOn: state.mainLoader.isMainLoaderOn,
+    user: state.auth.user,
   };
 };
 
