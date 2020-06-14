@@ -21,8 +21,16 @@ export const switchUserEditorAction = (data) => {
   };
 };
 
+export const switchPassEditorAction = (data) => {
+  return {
+    type: actionTypes.SWITCH_PASS_EDIT_MODAL,
+    data,
+  };
+};
+
 export const actions = {
   switchModalAction,
   switchUserModalAction,
   switchUserEditorAction,
+  switchPassEditorAction,
 };

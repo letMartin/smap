@@ -17,6 +17,7 @@ class UserMenu extends Component {
   static propTypes = {
     isMainLoaderOn: propTypes.bool,
     switchUserEditorAction: propTypes.func,
+    switchPassEditorAction: propTypes.func,
     postcards: propTypes.array,
     user: propTypes.object,
   };
@@ -33,10 +34,6 @@ class UserMenu extends Component {
     localStorage.removeItem("smapToken");
     localStorage.removeItem("smapUser");
     window.location.reload();
-  }
-
-  handleInputChange(e) {
-    console.log(e.currentTarget.value);
   }
 
   handleToggleProfile(isOpen) {
@@ -68,7 +65,9 @@ class UserMenu extends Component {
             <MenuItem onClick={() => this.props.switchUserEditorAction(true)}>
               Edit account
             </MenuItem>
-            <MenuItem onClick={this.handleClose}>Change password</MenuItem>
+            <MenuItem onClick={() => this.props.switchPassEditorAction(true)}>
+              Change password
+            </MenuItem>
             <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
           </Menu>
         </div>

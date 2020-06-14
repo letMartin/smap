@@ -1,10 +1,14 @@
 import UserMenu from "./UserMenu";
 import { connect } from "react-redux";
 
-import { switchUserEditorAction } from "../../store/actions/modal";
+import {
+  switchUserEditorAction,
+  switchPassEditorAction,
+} from "../../store/actions/modal";
 
 const mapDispatchToProps = {
   switchUserEditorAction,
+  switchPassEditorAction,
 };
 
 const mapStateToProps = (state) => {

@@ -8,6 +8,7 @@ import MyMap from "../containers/MyMap";
 import PostcardCreator from "../containers/PostcardCreator";
 import UserMenu from "../containers/UserMenu";
 import UserEditor from "../containers/UserEditor";
+import PassEditor from "../containers/PassEditor";
 
 import "./RootLayout.scss";
 
@@ -17,11 +18,10 @@ class RootLayout extends Component {
     isModalOpen: PropTypes.bool,
     isAuth: PropTypes.bool,
     isMainLoaderOn: PropTypes.bool,
-    isUserEditModalOpen: PropTypes.bool,
   };
 
   render() {
-    const { isAuth, isUserEditModalOpen } = this.props;
+    const { isAuth } = this.props;
 
     return (
       <div className="root-layout__container">
@@ -29,7 +29,8 @@ class RootLayout extends Component {
           <div>
             <MyMap />
             <UserMenu />
-            {isUserEditModalOpen && <UserEditor />}
+            <PassEditor />
+            <UserEditor />
             {this.props.isModalOpen && <PostcardCreator />}
           </div>
         ) : (

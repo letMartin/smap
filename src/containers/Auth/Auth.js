@@ -159,8 +159,6 @@ class Auth extends Component {
     input.isValid = input.regex.test(value);
     form.inpGroup[index] = input;
 
-    console.log(inpKey);
-
     this.setState({
       [inpKey]: form,
     });

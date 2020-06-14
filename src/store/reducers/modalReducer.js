@@ -4,6 +4,7 @@ export const initialState = {
   isModalOpen: false,
   isUserModalOpen: false,
   isUserEditModalOpen: false,
+  isPassEditModalOpen: false,
 };
 
 export const modalReducer = (state = initialState, action) => {
@@ -24,6 +25,12 @@ export const modalReducer = (state = initialState, action) => {
       return {
         ...state,
         isUserEditModalOpen: action.data,
+      };
+    }
+    case actionTypes.SWITCH_PASS_EDIT_MODAL: {
+      return {
+        ...state,
+        isPassEditModalOpen: action.data,
       };
     }
     default: {
