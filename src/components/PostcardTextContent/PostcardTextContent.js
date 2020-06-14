@@ -16,6 +16,7 @@ const PostcardTextContent = ({
   maxReceivers,
   onMultiChange,
   isUploadStarted,
+  isSubmitClicked,
 }) => {
   const styles = {
     colorGrey: {
@@ -41,6 +42,7 @@ const PostcardTextContent = ({
           renderInput={(params) => (
             <TextField
               {...params}
+              error={isSubmitClicked && !receivers.length}
               disabled={receivers.length >= 2}
               variant="standard"
               label="Select receivers"
@@ -97,6 +99,7 @@ PostcardTextContent.propTypes = {
   users: propTypes.array,
   receivers: propTypes.array,
   isUploadStarted: propTypes.bool,
+  isSubmitClicked: propTypes.bool,
   maxReceivers: propTypes.number,
 };
 

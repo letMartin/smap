@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 
-const ProfileViewer = ({ isOpen, onClose, user }) => {
+const ProfileViewer = ({ isOpen, onClose, user, postcards }) => {
   const { name, surname, gender, email, createdAt, updatedAt } = user;
   return (
     <Dialog open={isOpen} maxWidth="xs" fullWidth>
@@ -29,6 +29,9 @@ const ProfileViewer = ({ isOpen, onClose, user }) => {
         <Typography variant="body1" gutterBottom>
           Updated at: {moment(updatedAt).format("DD MMMM YYYY HH:MM")}
         </Typography>
+        <Typography variant="body1" gutterBottom>
+          Postcards received: {postcards.length} (3 new)
+        </Typography>
         <Button color="primary" onClick={() => onClose(false)} fullWidth>
           Close
         </Button>
@@ -41,6 +44,7 @@ ProfileViewer.propTypes = {
   isOpen: propTypes.bool,
   onClose: propTypes.func,
   user: propTypes.object,
+  postcards: propTypes.array,
 };
 
 export default ProfileViewer;

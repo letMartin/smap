@@ -65,6 +65,7 @@ class PostcardCreator extends Component {
     users: [],
     receivers: [],
     maxReceivers: 10,
+    isSubmitClicked: false,
   };
 
   static propTypes = {
@@ -180,6 +181,11 @@ class PostcardCreator extends Component {
     const { imageData, postcardText, receivers } = this.state;
     const { user, deviceLocation, sendPostcard } = this.props;
 
+    if (!receivers.length) {
+      this.setState({ isSubmitClicked: true });
+      return;
+    }
+
     saveImage(imageData.image).then((res) => {
       const { fileId } = res.data;
       const postcard = {
@@ -247,6 +253,7 @@ class PostcardCreator extends Component {
             receivers={this.state.receivers}
             maxReceivers={this.state.maxReceivers}
             text={postcardText}
+            isSubmitClicked={this.state.isSubmitClicked}
             isUploadStarted={isUploadStarted}
           />
         )}

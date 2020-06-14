@@ -21,6 +21,8 @@ import {
   genderRegExp,
 } from "../../store/regex";
 
+import { placeholders, errors } from "../../store/labels";
+
 import TextInput from "../../components/TextInput/TextInput";
 
 const initState = {
@@ -32,7 +34,8 @@ const initState = {
         key: "email",
         type: "email",
         title: "Email",
-        placeholder: "Enter your email address",
+        placeholder: placeholders.email,
+        errorText: errors.email,
         regex: emailRegExp,
         value: "",
         isValid: false,
@@ -44,7 +47,8 @@ const initState = {
         key: "password",
         type: "password",
         title: "Password",
-        placeholder: "Enter your password",
+        placeholder: placeholders.password,
+        errorText: errors.password,
         regex: passRegExp,
         value: "",
         isValid: false,
@@ -56,7 +60,8 @@ const initState = {
         key: "name",
         type: "text",
         title: "Name",
-        placeholder: "Enter your Name",
+        placeholder: placeholders.name,
+        errorText: errors.name,
         regex: nameRegExp,
         value: "",
         isValid: false,
@@ -68,7 +73,8 @@ const initState = {
         key: "Surname",
         type: "text",
         title: "Surname",
-        placeholder: "Enter your surname",
+        placeholder: placeholders.surname,
+        errorText: errors.surname,
         regex: nameRegExp,
         value: "",
         isValid: false,
@@ -97,7 +103,8 @@ const initState = {
         key: "email",
         type: "text",
         title: "Email",
-        placeholder: "Enter your email address",
+        placeholder: placeholders.email,
+        errorText: errors.email,
         regex: emailRegExp,
         value: "",
         isValid: false,
@@ -108,7 +115,8 @@ const initState = {
         key: "password",
         type: "password",
         title: "Password",
-        placeholder: "Enter your password",
+        placeholder: placeholders.password,
+        errorText: errors.password,
         regex: passRegExp,
         value: "",
         isValid: false,
@@ -150,6 +158,8 @@ class Auth extends Component {
     input.value = value;
     input.isValid = input.regex.test(value);
     form.inpGroup[index] = input;
+
+    console.log(inpKey);
 
     this.setState({
       [inpKey]: form,

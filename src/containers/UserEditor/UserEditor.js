@@ -8,6 +8,7 @@ import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import HowToRegOutlinedIcon from "@material-ui/icons/HowToRegOutlined";
 
 import "./UserEditor.scss";
+import { placeholders, errors } from "../../store/labels";
 import { nameRegExp, genderRegExp } from "../../store/regex";
 import TextInput from "../../components/TextInput/TextInput";
 
@@ -21,7 +22,8 @@ class UserEditor extends Component {
           key: "name",
           type: "text",
           title: "Name",
-          placeholder: "Enter your Name",
+          placeholder: placeholders.name,
+          errorText: errors.name,
           regex: nameRegExp,
           value: "",
           isValid: false,
@@ -33,7 +35,8 @@ class UserEditor extends Component {
           key: "surname",
           type: "text",
           title: "Surname",
-          placeholder: "Enter your surname",
+          placeholder: placeholders.surname,
+          errorText: errors.surname,
           regex: nameRegExp,
           value: "",
           isValid: false,

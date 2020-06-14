@@ -17,6 +17,7 @@ class UserMenu extends Component {
   static propTypes = {
     isMainLoaderOn: propTypes.bool,
     switchUserEditorAction: propTypes.func,
+    postcards: propTypes.array,
     user: propTypes.object,
   };
 
@@ -74,6 +75,7 @@ class UserMenu extends Component {
         <ProfileViewer
           isOpen={this.state.isProfileOpen}
           user={this.props.user}
+          postcards={this.props.postcards}
           onClose={(isOpen) => this.handleToggleProfile(isOpen)}
         />
       </>

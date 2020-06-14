@@ -5,6 +5,7 @@ import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -49,8 +50,9 @@ const TextInput = ({
       </FormControl>
     );
   } else {
+    const isError = !input.isValid && isSubmitClicked;
     generatedInput = (
-      <FormControl fullWidth style={{ margin: "10px 0" }}>
+      <FormControl fullWidth style={{ margin: "10px 0" }} error={isError}>
         <InputLabel htmlFor={input.key}>{input.title}</InputLabel>
         <Input
           value={input.value}
@@ -62,7 +64,6 @@ const TextInput = ({
           required
           fullWidth
           id={input.key}
-          error={!input.isValid && isSubmitClicked}
           startAdornment={
             <InputAdornment position="start">
               {input.startAdornment}
@@ -72,6 +73,9 @@ const TextInput = ({
             <InputAdornment position="end">{iconBtn}</InputAdornment>
           }
         />
+        {isError && (
+          <FormHelperText id={input.error}>{input.errorText}</FormHelperText>
+        )}
       </FormControl>
     );
   }
