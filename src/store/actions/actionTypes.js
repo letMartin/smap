@@ -1,4 +1,5 @@
 export const GET_POSTCARDS = "GET_POSTCARDS";
+export const GET_IMAGE = "GET_IMAGE";
 export const MAIN_LOADER_SWITCH = "MAIN_LOADER_SWITCH";
 export const SWITCH_MODAL = "SWITCH_MODAL";
 export const SWITCH_USER_MODAL = "SWITCH_USER_MODAL";

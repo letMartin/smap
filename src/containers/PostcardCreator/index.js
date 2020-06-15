@@ -1,19 +1,13 @@
 import PostcardCreator from "./PostcardCreator";
 import { connect } from "react-redux";
 import { switchModalAction } from "../../store/actions/modal";
-import {
-  getPostcards,
-  saveImage,
-  sendPostcard,
-} from "../../store/actions/postcards";
+import { getPostcards } from "../../store/actions/postcards";
 import { getUsers } from "../../store/actions/users";
 
 const mapDispatchToProps = {
   switchModalAction,
   getPostcards,
-  saveImage,
   getUsers,
-  sendPostcard,
 };
 
 const mapStateToProps = (state) => {

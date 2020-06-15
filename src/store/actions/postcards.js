@@ -15,17 +15,30 @@ export const getPostcards = () => {
   };
 };
 
-export const sendPostcard = (postcard) => {
+export const getImage = (id) => {
   return (dispatch) => {
     axios
-      .post("/postcards", postcard, getHeaders())
+      .get(`/files/${id}`, getHeaders())
       .then((res) => {
-        console.log(res);
+        dispatch(getImageAction(res.data));
       })
       .catch((error) => {
         handleHttpError(error);
       });
   };
+};
+
+export const sendPostcard = (postcard) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/postcards", postcard, getHeaders())
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 };
 
 export const saveImage = (imgFile) => {
@@ -38,7 +51,6 @@ export const saveImage = (imgFile) => {
         resolve(res);
       })
       .catch((error) => {
-        handleHttpError(error);
         reject(error);
       });
   });
@@ -47,6 +59,13 @@ export const saveImage = (imgFile) => {
 export const getPostcardsAction = (data) => {
   return {
     type: actionTypes.GET_POSTCARDS,
+    data,
+  };
+};
+
+export const getImageAction = (data) => {
+  return {
+    type: actionTypes.GET_IMAGE,
     data,
   };
 };
@@ -60,4 +79,5 @@ export const mainLoaderSwitchAction = (data) => {
 
 export const actions = {
   getPostcards,
+  getImage,
 };

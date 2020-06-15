@@ -36,6 +36,8 @@ class MyMap extends Component {
 
   static propTypes = {
     postcards: propTypes.array,
+    image: propTypes.object,
+    getImage: propTypes.func,
     isModalOpen: propTypes.bool,
   };
 
@@ -80,6 +82,7 @@ class MyMap extends Component {
   };
 
   handleOpenPostcard(postcard) {
+    this.props.getImage(postcard.file.fileId);
     this.setState({
       isPostcardOpen: true,
       postcardImageLoaded: false,
@@ -132,6 +135,7 @@ class MyMap extends Component {
             open={isPostcardOpen}
             postcard={postcard}
             isLoaded={postcardImageLoaded}
+            image={this.props.image}
             onClose={() => this.handleClosePostcard()}
             onImageReady={this.handlePostcardImageLoaded}
           />

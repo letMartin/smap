@@ -13,7 +13,15 @@ const PostcardViewer = ({
   onImageReady,
   onClose,
   isLoaded,
+  image,
 }) => {
+  let imgSrc = "";
+
+  if (image && image.fileId === postcard.file.fileId) {
+    imgSrc = `data:image/jpg;base64, ${Buffer.from(image.data.data).toString(
+      "base64"
+    )}`;
+  }
   return (
     <Dialog
       open={open}
@@ -21,11 +29,7 @@ const PostcardViewer = ({
       className="postcard-viewer__container"
     >
       <div>
-        <img
-          src="https://images.unsplash.com/photo-1526080676457-4544bf0ebba9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80"
-          alt=""
-          onLoad={onImageReady}
-        />
+        <img src={imgSrc} alt="" onLoad={onImageReady} />
       </div>
       {!isLoaded && (
         <div className="postcard-viewer__progress">

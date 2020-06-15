@@ -2,6 +2,7 @@ import * as actionTypes from "../actions/actionTypes";
 
 export const initialState = {
   postcards: [],
+  image: null,
 };
 
 export const postcardsReducer = (state = initialState, action) => {
@@ -10,6 +11,12 @@ export const postcardsReducer = (state = initialState, action) => {
       return {
         ...state,
         postcards: action.data,
+      };
+    }
+    case actionTypes.GET_IMAGE: {
+      return {
+        ...state,
+        image: action.data,
       };
     }
     default: {

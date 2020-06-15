@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
 import Resizer from "react-image-file-resizer";
+import { toast } from "react-toastify";
 
 import Dialog from "@material-ui/core/Dialog";
 import Stepper from "@material-ui/core/Stepper";
@@ -19,8 +20,9 @@ import ImageViewer from "../../components/ImageViewer/ImageViewer";
 import PostcardTextContent from "../../components/PostcardTextContent/PostcardTextContent";
 import FileInput from "../../components/FileInput/Fileinput";
 
-import { saveImage } from "../../store/actions/postcards";
-
+import { saveImage, sendPostcard } from "../../store/actions/postcards";
+import { handleHttpError } from "../../utilities/httpErrors";
+import { titleRegExp, contentRegExp } from "../../store/regex";
 import "./PostcardCreator.scss";
 
 const clearBthStyle = {
@@ -51,8 +53,18 @@ class PostcardCreator extends Component {
     postcardText: {
       key: "postcardText",
       value: "",
+      regex: contentRegExp,
+      isValid: true,
       length: 0,
       maxLength: 250,
+    },
+    postcardTitle: {
+      key: "postcardTitle",
+      value: "",
+      regex: titleRegExp,
+      isValid: false,
+      length: 0,
+      maxLength: 50,
     },
     activeStep: 0,
     steps: [
@@ -61,11 +73,11 @@ class PostcardCreator extends Component {
       { name: "text", label: "Text" },
     ],
     imageError: "",
-    isUploadStarted: false,
     users: [],
     receivers: [],
     maxReceivers: 10,
     isSubmitClicked: false,
+    isLoaderOn: false,
   };
 
   static propTypes = {
@@ -84,7 +96,7 @@ class PostcardCreator extends Component {
 
   componentDidUpdate(prevProps) {
     const { usersList } = this.props;
-    if (prevProps.usersList.length < usersList.length && usersList.length > 0) {
+    if (!this.state.users.length && usersList.length) {
       const users = usersList.map((user) => {
         return {
           title: `${user.name} ${user.surname}`,
@@ -152,11 +164,15 @@ class PostcardCreator extends Component {
     if (value.length > this.state[stateName].maxLength) {
       return;
     }
+
+    const isValid = this.state[stateName].regex.test(value);
+
     this.setState({
       [stateName]: {
         ...this.state[stateName],
         length: value.trim().length,
         value,
+        isValid,
       },
     });
   }
@@ -178,27 +194,61 @@ class PostcardCreator extends Component {
   };
 
   submitPostcard = () => {
-    const { imageData, postcardText, receivers } = this.state;
-    const { user, deviceLocation, sendPostcard } = this.props;
+    const { imageData, postcardText, receivers, postcardTitle } = this.state;
+    const {
+      user,
+      // deviceLocation,
+    } = this.props;
 
-    if (!receivers.length) {
+    if (!this.isFormValid()) {
       this.setState({ isSubmitClicked: true });
       return;
     }
 
-    saveImage(imageData.image).then((res) => {
-      const { fileId } = res.data;
-      const postcard = {
-        fileId,
-        content: postcardText.value,
-        senderId: user.userId,
-        receiverId: receivers[0].id,
-        localization: deviceLocation,
-      };
+    const receiversIds = receivers.map((rec) => rec.id);
 
-      sendPostcard(postcard);
-    });
+    const lat = randomInt(65, 40);
+    const long = randomInt(0, 18);
+
+    function randomInt(min, max) {
+      return min + Math.floor((max - min) * Math.random());
+    }
+
+    const fakeDeviceLocation = [lat, long];
+
+    this.setState({ isLoaderOn: true });
+
+    saveImage(imageData.image)
+      .then((res) => {
+        const { fileId } = res.data;
+        const postcard = {
+          fileId,
+          receiversIds,
+          senderId: user.userId,
+          localization: fakeDeviceLocation,
+          content: postcardText.value,
+          shortDescription: postcardTitle.value,
+        };
+
+        sendPostcard(postcard)
+          .then(() => {
+            this.setState({ isLoaderOn: false });
+            toast.success("Postcard sent");
+            this.props.switchModalAction(false);
+            this.props.getPostcards();
+          })
+          .catch((error) => handleHttpError(error));
+      })
+      .catch((error) => {
+        handleHttpError(error);
+        this.setState({ isLoaderOn: false });
+      });
   };
+
+  isFormValid() {
+    const { receivers, postcardText, postcardTitle } = this.state;
+    return receivers.length && postcardText.isValid && postcardTitle.isValid;
+  }
 
   render() {
     const {
@@ -207,9 +257,11 @@ class PostcardCreator extends Component {
       imageData,
       imageError,
       postcardText,
-      isUploadStarted,
+      postcardTitle,
+      isLoaderOn,
     } = this.state;
     let isNextStepBlocked = true;
+
     if (activeStep === 0) {
       isNextStepBlocked = !this.props.deviceLocation.length;
     } else if (activeStep === 1) {
@@ -253,8 +305,9 @@ class PostcardCreator extends Component {
             receivers={this.state.receivers}
             maxReceivers={this.state.maxReceivers}
             text={postcardText}
+            title={postcardTitle}
             isSubmitClicked={this.state.isSubmitClicked}
-            isUploadStarted={isUploadStarted}
+            isLoaderOn={isLoaderOn}
           />
         )}
         <Stepper alternativeLabel activeStep={activeStep}>
@@ -269,15 +322,21 @@ class PostcardCreator extends Component {
         <div>
           {activeStep < steps.length && (
             <div className="postcard-creator-buttons__container">
-              <Button onClick={() => this.props.switchModalAction(false)}>
+              <Button
+                onClick={() => this.props.switchModalAction(false)}
+                disabled={isLoaderOn}
+              >
                 Reset
               </Button>
               <ButtonGroup>
-                <Button disabled={activeStep === 0} onClick={this.handleBack}>
+                <Button
+                  disabled={activeStep === 0 || isLoaderOn}
+                  onClick={this.handleBack}
+                >
                   Back
                 </Button>
                 <Button
-                  disabled={isNextStepBlocked}
+                  disabled={isNextStepBlocked || isLoaderOn}
                   variant="contained"
                   color="primary"
                   onClick={this.handleNext}

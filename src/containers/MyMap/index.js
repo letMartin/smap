@@ -1,9 +1,14 @@
 import MyMap from "./MyMap";
 import { connect } from "react-redux";
-import { getPostcards, sendPostcard } from "../../store/actions/postcards";
+import {
+  getPostcards,
+  sendPostcard,
+  getImage,
+} from "../../store/actions/postcards";
 import { switchModalAction } from "../../store/actions/modal";
 
 const mapDispatchToProps = {
+  getImage,
   getPostcards,
   sendPostcard,
   switchModalAction,
@@ -12,6 +17,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => {
   return {
     postcards: state.postcards.postcards,
+    image: state.postcards.image,
     isModalOpen: state.modal.isModalOpen,
   };
 };
