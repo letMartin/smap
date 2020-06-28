@@ -6,6 +6,9 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+import newPostcard from "../../store/images/postcard-new-icon.png";
+import openPostcard from "../../store/images/postcard-open.png";
+
 import "./MyMap.scss";
 import { initMap } from "../../settings/mapSettings";
 import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
@@ -14,9 +17,14 @@ import PostcardViewer from "../../components/PostcardViewer/PostcardViewer";
 
 const markers = new L.markerClusterGroup();
 
-const mailIcon = L.icon({
-  iconUrl: initMap.urls.mailIcon,
-  iconSize: [34, 34],
+const newPostcardIcon = L.icon({
+  iconUrl: newPostcard,
+  iconSize: [32, 32],
+});
+
+const openPostcardIcon = L.icon({
+  iconUrl: openPostcard,
+  iconSize: [32, 32],
 });
 
 class MyMap extends Component {
@@ -64,11 +72,11 @@ class MyMap extends Component {
       markers.removeLayer(this.state.layerGroup);
     }
 
-    postcards.forEach((postcard) => {
+    postcards.forEach((postcard, index) => {
       const { localization, sender, shortDescription } = postcard;
-
+      const icon = index % 2 ? newPostcardIcon : openPostcardIcon;
       markers.addLayer(
-        L.marker(localization, { icon: mailIcon })
+        L.marker(localization, { icon })
           .on("click", () => this.handleOpenPostcard(postcard))
           .bindTooltip(`${shortDescription} - from ${sender.userId}`, {
             direction: "top",

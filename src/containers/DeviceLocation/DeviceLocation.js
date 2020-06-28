@@ -2,19 +2,21 @@ import React, { Component } from "react";
 import propTypes from "prop-types";
 import { toast } from "react-toastify";
 
-import "./DeviceLocation.scss";
-import CircularProgress from "@material-ui/core/CircularProgress";
-
-import { initMap } from "../../settings/mapSettings";
-
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
+import CircularProgress from "@material-ui/core/CircularProgress";
+
+import "./DeviceLocation.scss";
+import location from "../../store/images/location.png";
+
+import { initMap } from "../../settings/mapSettings";
+
 const deviceIcon = L.icon({
-  iconUrl: initMap.urls.deviceIcon,
-  iconSize: [34, 34],
+  iconUrl: location,
+  iconSize: [64, 64],
 });
 
 class DeviceLocation extends Component {
