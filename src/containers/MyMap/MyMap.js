@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
 import L from "leaflet";
-import moment from "moment";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/leaflet.markercluster-src";
@@ -32,6 +31,7 @@ class MyMap extends Component {
     postcardImageLoaded: false,
     postcard: null,
     layerGroup: null,
+    postcardSide: "front",
   };
 
   static propTypes = {
@@ -65,13 +65,14 @@ class MyMap extends Component {
     }
 
     postcards.forEach((postcard) => {
-      const { localization, updatedAt, sender } = postcard;
-      const date = moment(updatedAt).format("DD MMMM YYYY");
+      const { localization, sender, shortDescription } = postcard;
 
       markers.addLayer(
         L.marker(localization, { icon: mailIcon })
           .on("click", () => this.handleOpenPostcard(postcard))
-          .bindTooltip(`${sender.userId} on ${date}`, { direction: "top" })
+          .bindTooltip(`${shortDescription} - from ${sender.userId}`, {
+            direction: "top",
+          })
       );
     });
 
@@ -90,11 +91,23 @@ class MyMap extends Component {
     });
   }
 
+  handlePostcardClick = (e) => {
+    const { classList } = e.target;
+    if (classList.contains("postcard-wrapper")) {
+      this.handleClosePostcard();
+    } else {
+      const postcardSide =
+        this.state.postcardSide === "front" ? "back" : "front";
+      this.setState({ postcardSide });
+    }
+  };
+
   handleClosePostcard() {
     this.setState({
       isPostcardOpen: false,
       postcardImageLoaded: false,
       postcard: null,
+      postcardSide: "front",
     });
   }
 
@@ -102,14 +115,8 @@ class MyMap extends Component {
     this.props.switchModalAction(true);
   }
 
-  handlePostcardImageLoaded = (e) => {
-    this.setState({
-      postcardImageLoaded: true,
-    });
-  };
-
   render() {
-    const { layer, isPostcardOpen, postcard, postcardImageLoaded } = this.state;
+    const { layer, isPostcardOpen, postcard, postcardSide } = this.state;
     return (
       <>
         <div className="my-map__container" id="map-main">
@@ -130,14 +137,12 @@ class MyMap extends Component {
             />
           )}
         </div>
-        {postcard && (
+        {postcard && isPostcardOpen && (
           <PostcardViewer
-            open={isPostcardOpen}
             postcard={postcard}
-            isLoaded={postcardImageLoaded}
             image={this.props.image}
-            onClose={() => this.handleClosePostcard()}
-            onImageReady={this.handlePostcardImageLoaded}
+            postcardSide={postcardSide}
+            onPostcardClick={this.handlePostcardClick}
           />
         )}
       </>

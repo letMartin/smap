@@ -118,8 +118,8 @@ class PostcardCreator extends Component {
     if (image) {
       Resizer.imageFileResizer(
         image,
-        600,
-        600,
+        800,
+        800,
         "JPEG",
         100,
         0,
@@ -140,15 +140,34 @@ class PostcardCreator extends Component {
     const reader = new FileReader();
     reader.readAsDataURL(image);
     reader.onloadend = () => {
-      this.setState({
-        imageData: {
-          ...this.state.imageData,
-          url: reader.result,
-          image,
-        },
-      });
+      this.handleImageLoaded(image, reader.result);
     };
   }
+
+  handleImageLoaded = (img, url) => {
+    const image = new Image();
+    image.onload = (e) => {
+      const { width, height } = e.path[0];
+
+      if (width < 350 || height < 350) {
+        this.setState({
+          imageError:
+            "Both image width and height must be at least 350px large",
+        });
+      } else {
+        this.setState({
+          imageData: {
+            ...this.state.imageData,
+            image: img,
+            width,
+            height,
+            url,
+          },
+        });
+      }
+    };
+    image.src = url;
+  };
 
   handleImageClear() {
     const imageData = {
@@ -157,6 +176,7 @@ class PostcardCreator extends Component {
       height: 0,
       width: 0,
     };
+
     this.setState({ imageData });
   }
 
@@ -164,7 +184,6 @@ class PostcardCreator extends Component {
     if (value.length > this.state[stateName].maxLength) {
       return;
     }
-
     const isValid = this.state[stateName].regex.test(value);
 
     this.setState({
@@ -228,6 +247,8 @@ class PostcardCreator extends Component {
           localization: fakeDeviceLocation,
           content: postcardText.value,
           shortDescription: postcardTitle.value,
+          fileWidth: imageData.width,
+          fileHeight: imageData.height,
         };
 
         sendPostcard(postcard)
@@ -285,6 +306,7 @@ class PostcardCreator extends Component {
             </IconButton>
             <ImageViewer
               imageData={imageData}
+              onImageLoaded={this.handleImageLoaded}
               onImageClear={() => this.handleImageClear()}
             />
           </>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import propTypes from "prop-types";
 
-const ImageViewer = ({ imageData }) => {
+const ImageViewer = ({ imageData, onImageLoaded }) => {
   const { url } = imageData;
   const [contentHeight, setHeight] = useState(0);
   const [contentWidth, setWidth] = useState(0);
@@ -30,7 +30,12 @@ const ImageViewer = ({ imageData }) => {
     };
   }
   return (
-    <div className="step-content__container" ref={ref} style={containerStyle}>
+    <div
+      className="step-content__container"
+      ref={ref}
+      style={containerStyle}
+      onLoad={onImageLoaded}
+    >
       <div>{url && <img src={url} alt="" style={imgStyle} />}</div>
     </div>
   );
