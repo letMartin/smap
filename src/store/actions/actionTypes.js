@@ -10,3 +10,5 @@ export const REGISTER_USER = "REGISTER_USER";
 export const AUTH_USER = "AUTH_USER";
 export const GET_USER = "GET_USER";
 export const GET_USERS = "GET_USERS";
+export const SHOW_ALL_POSTCARDS = "SHOW_ALL_POSTCARDS";
+export const SHOW_RECEIVED_POSCARDS = "SHOW_RECEIVED_POSCARDS";

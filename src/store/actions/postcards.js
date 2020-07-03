@@ -77,6 +77,20 @@ export const mainLoaderSwitchAction = (data) => {
   };
 };
 
+export const receivedPostcardsSwitchAction = (data) => {
+  return {
+    type: actionTypes.SHOW_RECEIVED_POSCARDS,
+    data,
+  };
+};
+
+export const allPostcardsSwitchAction = (data) => {
+  return {
+    type: actionTypes.SHOW_ALL_POSTCARDS,
+    data,
+  };
+};
+
 export const actions = {
   getPostcards,
   getImage,

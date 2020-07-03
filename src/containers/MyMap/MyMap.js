@@ -75,6 +75,7 @@ class MyMap extends Component {
     postcards.forEach((postcard, index) => {
       const { localization, sender, shortDescription } = postcard;
       const icon = index % 2 ? newPostcardIcon : openPostcardIcon;
+
       markers.addLayer(
         L.marker(localization, { icon })
           .on("click", () => this.handleOpenPostcard(postcard))
@@ -123,8 +124,15 @@ class MyMap extends Component {
     this.props.switchModalAction(true);
   }
 
+  handleChangeActiveView() {
+    const activeView =
+      this.state.activeView === "Received" ? "Sent" : "Received";
+    this.setState({ activeView });
+  }
+
   render() {
     const { layer, isPostcardOpen, postcard, postcardSide } = this.state;
+
     return (
       <>
         <div className="my-map__container" id="map-main">
