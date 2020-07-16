@@ -5,7 +5,13 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 import "./PostcardViewer.scss";
 
-const PostcardViewer = ({ postcard, postcardSide, onPostcardClick, image }) => {
+const PostcardViewer = ({
+  postcard,
+  postcardSide,
+  onPostcardClick,
+  onImgLoaded,
+  image,
+}) => {
   const { fileHeight, fileWidth } = postcard;
 
   let imgSrc = null;
@@ -25,7 +31,12 @@ const PostcardViewer = ({ postcard, postcardSide, onPostcardClick, image }) => {
       <div className="postcard-wrapper">
         <div className="postcard-container" style={style}>
           {imgSrc ? (
-            <img src={imgSrc} alt="" className="postcard-image" />
+            <img
+              src={imgSrc}
+              alt=""
+              className="postcard-image"
+              onLoad={() => onImgLoaded(postcard)}
+            />
           ) : (
             <div className="image-placeholder">
               <canvas
@@ -61,6 +72,7 @@ PostcardViewer.propTypes = {
   postcardSide: propTypes.string,
   postcard: propTypes.object,
   onPostcardClick: propTypes.func,
+  onImgLoaded: propTypes.func,
 };
 
 export default PostcardViewer;

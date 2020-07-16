@@ -18,7 +18,10 @@ const mapStateToProps = (state) => {
   return {
     postcards: state.postcards.postcards,
     image: state.postcards.image,
+    user: state.auth.user,
     isModalOpen: state.modal.isModalOpen,
+    isAllPostcards: state.postcards.isAllPostcards,
+    isReceivedPostcards: state.postcards.isReceivedPostcards,
   };
 };
 

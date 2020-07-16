@@ -1,17 +1,29 @@
+import { toast } from "react-toastify";
+
 import * as actionTypes from "./actionTypes";
 import axios, { getHeaders } from "../../services/axiosConfig";
 import { handleHttpError } from "../../utilities/httpErrors";
 
-export const getPostcards = () => {
+export const getPostcards = (isReceived) => {
+  const params = isReceived ? "type=RECEIVED" : "type=SENT";
+  const warning = isReceived
+    ? "You have no received postcards"
+    : "You have no sent postcards";
+
   return (dispatch) => {
-    axios
-      .get("/postcards", getHeaders())
-      .then((res) => {
-        dispatch(getPostcardsAction(res.data));
-      })
-      .catch((error) => {
-        handleHttpError(error);
-      });
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`/postcards?${params}`, getHeaders())
+        .then((res) => {
+          dispatch(getPostcardsAction(res.data));
+          if (!res.data.length) toast.warn(warning);
+          resolve();
+        })
+        .catch((error) => {
+          handleHttpError(error);
+          reject();
+        });
+    });
   };
 };
 
@@ -51,6 +63,21 @@ export const saveImage = (imgFile) => {
         resolve(res);
       })
       .catch((error) => {
+        handleHttpError(error);
+        reject(error);
+      });
+  });
+};
+
+export const markAsRead = (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(`/postcards/${id}/mark-as-read`, undefined, getHeaders())
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((error) => {
+        handleHttpError(error);
         reject(error);
       });
   });

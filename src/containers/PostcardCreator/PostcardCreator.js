@@ -56,7 +56,7 @@ class PostcardCreator extends Component {
       regex: contentRegExp,
       isValid: true,
       length: 0,
-      maxLength: 250,
+      maxLength: 350,
     },
     postcardTitle: {
       key: "postcardTitle",
@@ -81,13 +81,14 @@ class PostcardCreator extends Component {
   };
 
   static propTypes = {
+    user: propTypes.object,
     deviceLocation: propTypes.array,
     usersList: propTypes.array,
     switchModalAction: propTypes.func,
     getPostcards: propTypes.func,
     sendPostcard: propTypes.func,
     getUsers: propTypes.func,
-    user: propTypes.object,
+    isReceivedPostcards: propTypes.bool,
   };
 
   componentDidMount() {
@@ -226,8 +227,8 @@ class PostcardCreator extends Component {
 
     const receiversIds = receivers.map((rec) => rec.id);
 
-    const lat = randomInt(65, 40);
-    const long = randomInt(0, 18);
+    const lat = randomInt(65, 20);
+    const long = randomInt(0, 45);
 
     function randomInt(min, max) {
       return min + Math.floor((max - min) * Math.random());
@@ -256,7 +257,7 @@ class PostcardCreator extends Component {
             this.setState({ isLoaderOn: false });
             toast.success("Postcard sent");
             this.props.switchModalAction(false);
-            this.props.getPostcards();
+            this.props.getPostcards(this.props.isReceivedPostcards);
           })
           .catch((error) => handleHttpError(error));
       })

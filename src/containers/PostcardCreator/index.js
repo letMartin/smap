@@ -16,6 +16,7 @@ const mapStateToProps = (state) => {
     deviceLocation: state.locations.deviceLocation,
     user: state.auth.user,
     usersList: state.users.usersList,
+    isReceivedPostcards: state.postcards.isReceivedPostcards,
   };
 };
 
