@@ -8,7 +8,7 @@ import "leaflet.markercluster/dist/leaflet.markercluster-src";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 import newPostcard from "../../store/images/envelope.png";
-import openPostcard from "../../store/images/location-pin.png";
+import openPostcard from "../../store/images/envelope-open.png";
 
 import "./MyMap.scss";
 import { initMap } from "../../settings/mapSettings";
@@ -16,6 +16,7 @@ import { markAsRead } from "../../store/actions/postcards";
 import AddPostcardButton from "../../components/AddPostcardButton/AddPostcardButton";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import PostcardViewer from "../../components/PostcardViewer/PostcardViewer";
+import { toast } from "react-toastify";
 
 const markers = new L.markerClusterGroup();
 
@@ -51,6 +52,7 @@ class MyMap extends Component {
     getImage: propTypes.func,
     isModalOpen: propTypes.bool,
     isAllPostcards: propTypes.bool,
+    isNewPostcards: propTypes.bool,
     isReceivedPostcards: propTypes.bool,
   };
 
@@ -73,14 +75,14 @@ class MyMap extends Component {
     return (
       props.postcards.length > prevProps.postcards.length ||
       prevProps.isAllPostcards !== props.isAllPostcards ||
+      (prevProps.isNewPostcards !== props.isNewPostcards &&
+        props.isReceivedPostcards) ||
       !isEqual(this.props.postcards, prevProps.postcards)
     );
   }
 
   getPostcards(isReceived) {
-    this.props
-      .getPostcards(isReceived)
-      .then(() => this.addPostcardMarkers(this.props.postcards));
+    this.props.getPostcards(isReceived);
   }
 
   handleTileLayer = () => {
@@ -91,6 +93,8 @@ class MyMap extends Component {
 
   addPostcardMarkers = (postcards) => {
     if (!postcards.length) return;
+    const { isAllPostcards, isNewPostcards, isReceivedPostcards } = this.props;
+    const layerGroup = L.layerGroup().addTo(this.map);
 
     let postcardsForRender = [...postcards];
 
@@ -98,30 +102,26 @@ class MyMap extends Component {
       markers.removeLayer(this.state.layerGroup);
     }
 
-    if (!this.props.isAllPostcards) {
+    if (!isAllPostcards) {
       postcardsForRender = this.filterPostcards(postcards);
     }
 
-    postcardsForRender.forEach((postcard) => {
-      const { localization, sender, shortDescription, read } = postcard;
-      const icon = read ? openPostcardIcon : newPostcardIcon;
+    if (!postcardsForRender.length) {
+      toast.warn("No postcards for this selection");
+    }
 
-      markers.addLayer(
-        L.marker(localization, { icon })
-          .on("click", () => this.handleOpenPostcard(postcard))
-          .bindTooltip(
-            `${shortDescription} - from ${sender.name} ${sender.surname}`,
-            {
-              direction: "top",
-            }
-          )
-      );
-    });
+    if (isNewPostcards && isReceivedPostcards) {
+      postcardsForRender = this.filterNewPostcards(postcardsForRender);
+    }
 
-    const layerGroup = L.layerGroup().addTo(this.map);
+    if (!postcardsForRender.length) {
+      toast.warn("No more new postcards");
+    }
+
+    this.addLayers(postcardsForRender);
 
     markers.addTo(layerGroup);
-    this.setState({ layerGroup });
+    this.setState({ layerGroup }, () => this.fitBounds(postcardsForRender));
   };
 
   filterPostcards(postcards) {
@@ -143,6 +143,44 @@ class MyMap extends Component {
     }
 
     return filtered;
+  }
+
+  filterNewPostcards(postcards) {
+    const filtered = postcards.filter((postcard) => !postcard.read);
+    return filtered;
+  }
+
+  addLayers(postcards) {
+    postcards.forEach((postcard) => {
+      const { localization, sender, shortDescription, read } = postcard;
+      const icon = read ? openPostcardIcon : newPostcardIcon;
+
+      markers.addLayer(
+        L.marker(localization, { icon })
+          .on("click", () => this.handleOpenPostcard(postcard))
+          .bindTooltip(
+            `${shortDescription} - from ${sender.name} ${sender.surname}`,
+            {
+              direction: "top",
+            }
+          )
+      );
+    });
+  }
+
+  fitBounds(postcards) {
+    if (!postcards.length) return;
+    const lat = [];
+    const long = [];
+    postcards.forEach((postcard) => {
+      lat.push(parseFloat(postcard.localization[0]));
+      long.push(parseFloat(postcard.localization[1]));
+    });
+
+    this.map.fitBounds([
+      [Math.min(...lat), Math.min(...long)],
+      [Math.max(...lat), Math.max(...long)],
+    ]);
   }
 
   handleOpenPostcard(postcard) {
@@ -179,7 +217,7 @@ class MyMap extends Component {
   }
 
   handleImageLoaded(postcard) {
-    if (postcard.read) {
+    if (postcard.read || !this.props.isReceivedPostcards) {
       return;
     }
     markAsRead(postcard.postcardId).then(() =>

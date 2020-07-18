@@ -21,6 +21,7 @@ const mapStateToProps = (state) => {
     user: state.auth.user,
     isModalOpen: state.modal.isModalOpen,
     isAllPostcards: state.postcards.isAllPostcards,
+    isNewPostcards: state.postcards.isNewPostcards,
     isReceivedPostcards: state.postcards.isReceivedPostcards,
   };
 };

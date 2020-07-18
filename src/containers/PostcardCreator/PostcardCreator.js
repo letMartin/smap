@@ -227,8 +227,8 @@ class PostcardCreator extends Component {
 
     const receiversIds = receivers.map((rec) => rec.id);
 
-    const lat = randomInt(65, 20);
-    const long = randomInt(0, 45);
+    const lat = randomInt(65, -65);
+    const long = randomInt(-179, 179);
 
     function randomInt(min, max) {
       return min + Math.floor((max - min) * Math.random());

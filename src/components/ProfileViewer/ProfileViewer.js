@@ -9,8 +9,21 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 
-const ProfileViewer = ({ isOpen, onClose, user, postcards }) => {
+const ProfileViewer = ({
+  isOpen,
+  onClose,
+  user,
+  postcards,
+  userStatistics,
+}) => {
   const { name, surname, gender, email, createdAt, updatedAt } = user;
+  const totalReceived = userStatistics
+    ? userStatistics.totalReceived
+    : "not available";
+  const totalSent = userStatistics ? userStatistics.totalSent : "not available";
+  const newReceived = userStatistics
+    ? userStatistics.newReceived
+    : "not available";
   return (
     <Dialog open={isOpen} maxWidth="xs" fullWidth>
       <div className="profile-viewer__container">
@@ -30,7 +43,10 @@ const ProfileViewer = ({ isOpen, onClose, user, postcards }) => {
           Updated at: {moment(updatedAt).format("DD MMMM YYYY HH:MM")}
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Postcards received: {postcards.length} (3 new)
+          Postcards received: {totalReceived} ({newReceived} new)
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Postcards sent: {totalSent}
         </Typography>
         <Button color="primary" onClick={() => onClose(false)} fullWidth>
           Close
@@ -44,6 +60,7 @@ ProfileViewer.propTypes = {
   isOpen: propTypes.bool,
   onClose: propTypes.func,
   user: propTypes.object,
+  userStatistics: propTypes.object,
   postcards: propTypes.array,
 };
 

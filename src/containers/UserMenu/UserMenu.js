@@ -7,9 +7,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import "./UserMenu.scss";
 import ProfileViewer from "../../components/ProfileViewer/ProfileViewer";
 import Switch from "@material-ui/core/Switch";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
+import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 
@@ -22,13 +20,17 @@ class UserMenu extends Component {
   static propTypes = {
     isMainLoaderOn: propTypes.bool,
     isAllPostcards: propTypes.bool,
+    isNewPostcards: propTypes.bool,
     isReceivedPostcards: propTypes.bool,
+    getPostcardsStatistics: propTypes.func,
     switchUserEditorAction: propTypes.func,
     switchPassEditorAction: propTypes.func,
     allPostcardsSwitchAction: propTypes.func,
+    newPostcardsSwitchAction: propTypes.func,
     receivedPostcardsSwitchAction: propTypes.func,
     postcards: propTypes.array,
     user: propTypes.object,
+    userStatistics: propTypes.object,
   };
 
   handleClick = ({ currentTarget }) => {
@@ -46,12 +48,26 @@ class UserMenu extends Component {
   }
 
   handleToggleProfile(isOpen) {
+    this.props.getPostcardsStatistics();
     this.setState({ isProfileOpen: isOpen });
   }
 
-  render() {
-    const { isAllPostcards, isReceivedPostcards } = this.props;
+  handlePostcardsStatus(isReceived) {
+    this.props.receivedPostcardsSwitchAction(isReceived);
+    if (!isReceived) {
+      this.props.newPostcardsSwitchAction(false);
+    }
+  }
 
+  render() {
+    const {
+      isAllPostcards,
+      isNewPostcards,
+      userStatistics,
+      isReceivedPostcards,
+      allPostcardsSwitchAction,
+      newPostcardsSwitchAction,
+    } = this.props;
     return (
       <>
         <div className="user-menu__container">
@@ -67,53 +83,54 @@ class UserMenu extends Component {
           <Menu
             id="simple-menu"
             anchorEl={this.state.anchorEl}
-            PaperProps={{ style: { width: "200px" } }}
+            PaperProps={{ style: { width: "250px" } }}
             keepMounted
             open={Boolean(this.state.anchorEl)}
             onClose={this.handleClose}
           >
-            <FormControl component="fieldset">
-              <FormGroup aria-label="position" row>
-                <FormControlLabel
-                  style={{ padding: "0 12px" }}
-                  value="top"
-                  control={
-                    <Switch
-                      color="primary"
-                      checked={isReceivedPostcards}
-                      onChange={() =>
-                        this.props.receivedPostcardsSwitchAction(
-                          !isReceivedPostcards
-                        )
-                      }
-                    />
-                  }
-                  label={isReceivedPostcards ? "Received" : "Sent"}
-                  labelPlacement="end"
-                />
-              </FormGroup>
-              <FormControlLabel
-                style={{ padding: "0 12px" }}
-                value="top"
-                control={
+            <div className="user-menu__switches">
+              <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>Received</Grid>
+                <Grid item>
                   <Switch
-                    color="primary"
-                    checked={isAllPostcards}
+                    checked={!isReceivedPostcards}
+                    color="default"
                     onChange={() =>
-                      this.props.allPostcardsSwitchAction(!isAllPostcards)
+                      this.handlePostcardsStatus(!isReceivedPostcards)
                     }
+                    value={"checked"}
                   />
-                }
-                label={
-                  isAllPostcards
-                    ? "All"
-                    : isReceivedPostcards
-                    ? "From myself"
-                    : "To myself"
-                }
-                labelPlacement="end"
-              />
-            </FormControl>
+                </Grid>
+                <Grid item>Sent</Grid>
+              </Grid>
+              <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>All</Grid>
+                <Grid item>
+                  <Switch
+                    checked={!isAllPostcards}
+                    color="default"
+                    onChange={() => allPostcardsSwitchAction(!isAllPostcards)}
+                    value={"checked"}
+                  />
+                </Grid>
+                <Grid item>
+                  {isReceivedPostcards ? "From myself" : "To myself"}
+                </Grid>
+              </Grid>
+              <Grid component="label" container alignItems="center" spacing={1}>
+                <Grid item>All</Grid>
+                <Grid item>
+                  <Switch
+                    checked={isNewPostcards}
+                    color="default"
+                    onChange={() => newPostcardsSwitchAction(!isNewPostcards)}
+                    value={"checked"}
+                    disabled={!isReceivedPostcards}
+                  />
+                </Grid>
+                <Grid item>Only new</Grid>
+              </Grid>
+            </div>
             <MenuItem onClick={() => this.handleToggleProfile(true)}>
               My profile
             </MenuItem>
@@ -129,6 +146,7 @@ class UserMenu extends Component {
         <ProfileViewer
           isOpen={this.state.isProfileOpen}
           user={this.props.user}
+          userStatistics={userStatistics}
           postcards={this.props.postcards}
           onClose={(isOpen) => this.handleToggleProfile(isOpen)}
         />

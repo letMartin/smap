@@ -83,6 +83,36 @@ export const markAsRead = (id) => {
   });
 };
 
+export const getPostcardsStatistics = () => {
+  const getReceived = axios.get("/postcards?type=RECEIVED", getHeaders());
+  const getSent = axios.get("/postcards?type=SENT", getHeaders());
+  return (dispatch) => {
+    Promise.all([getReceived, getSent])
+      .then((res) => {
+        const userStatistics = makeUserStatistics(res[0].data, res[1].data);
+        dispatch(getUserStatisticsAction(userStatistics));
+      })
+      .catch((error) =>
+        handleHttpError(error, "Error while getting user statistics")
+      );
+  };
+};
+
+const makeUserStatistics = (received, sent) => {
+  const result = {};
+  result.totalReceived = received.length;
+  result.totalSent = sent.length;
+  result.newReceived = received.filter((el) => !el.read).length;
+  return result;
+};
+
+export const getUserStatisticsAction = (data) => {
+  return {
+    type: actionTypes.GET_USER_STATISTICS,
+    data,
+  };
+};
+
 export const getPostcardsAction = (data) => {
   return {
     type: actionTypes.GET_POSTCARDS,
@@ -114,6 +144,13 @@ export const receivedPostcardsSwitchAction = (data) => {
 export const allPostcardsSwitchAction = (data) => {
   return {
     type: actionTypes.SHOW_ALL_POSTCARDS,
+    data,
+  };
+};
+
+export const newPostcardsSwitchAction = (data) => {
+  return {
+    type: actionTypes.SHOW_NEW_POSTCARDS,
     data,
   };
 };

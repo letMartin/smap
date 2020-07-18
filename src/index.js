@@ -12,7 +12,7 @@ const store = configureStore();
 ReactDOM.render(
   <Provider store={store}>
     <App />
-    <ToastContainer />
+    <ToastContainer position="top-left" autoClose={3000} />
   </Provider>,
   document.getElementById("root")
 );

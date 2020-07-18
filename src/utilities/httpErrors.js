@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-export const handleHttpError = (error) => {
+export const handleHttpError = (error, customError = "") => {
   let message = "";
 
   if (error.response && error.response.status && error.response.statusText) {
@@ -9,6 +9,9 @@ export const handleHttpError = (error) => {
     message = "Network error occured";
   } else {
     message = error.message;
+  }
+  if (customError) {
+    message += " - " + customError;
   }
   toast.error(message);
 
