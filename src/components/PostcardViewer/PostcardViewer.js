@@ -56,7 +56,7 @@ const PostcardViewer = ({
                 <p className="postcard-content">{postcard.content}</p>
               )}
               <p className="postcard-info">
-                {`${postcard.sender.userId} on
+                {`${postcard.sender.name} ${postcard.sender.surname} on
               ${moment(postcard.updatedAt).format("DD MMMM YYYY")}`}
               </p>
             </div>

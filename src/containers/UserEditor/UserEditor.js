@@ -3,7 +3,6 @@ import propTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import HowToRegOutlinedIcon from "@material-ui/icons/HowToRegOutlined";
 
@@ -65,6 +64,7 @@ class UserEditor extends Component {
     isUserEditModalOpen: propTypes.bool,
     user: propTypes.object,
     inpGroup: propTypes.array,
+    updateUser: propTypes.func,
     switchUserEditorAction: propTypes.func,
   };
 
@@ -111,16 +111,13 @@ class UserEditor extends Component {
     if (!this.isFormValid(form.inpGroup)) {
       return;
     } else {
-      console.log("Updating user ... ");
-      // const inputs = this.state.registerUser.inpGroup;
-      // const user = {
-      //   email: inputs[0].value,
-      //   password: inputs[1].value,
-      //   name: inputs[2].value,
-      //   surname: inputs[3].value,
-      //   gender: "MALE",
-      // };
-      // this.updateUser(user);
+      const inputs = this.state.editUser.inpGroup;
+      const user = {
+        name: inputs[0].value,
+        surname: inputs[1].value,
+        gender: inputs[2].value,
+      };
+      this.props.updateUser(user);
     }
   }
 
@@ -167,11 +164,6 @@ class UserEditor extends Component {
             >
               Save
             </Button>
-            {isMainLoaderOn && (
-              <div className="edit-user--loader">
-                <CircularProgress />
-              </div>
-            )}
           </div>
         </div>
       </Dialog>

@@ -18,7 +18,8 @@ export const handleHttpError = (error, customError = "") => {
   if (
     error.response &&
     error.response.status &&
-    error.response.status === 401
+    error.response.status === 401 &&
+    localStorage.getItem("smapToken")
   ) {
     localStorage.removeItem("smapToken");
     localStorage.removeItem("smapUser");

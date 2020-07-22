@@ -1,9 +1,11 @@
 import UserEditor from "./UserEditor";
 import { connect } from "react-redux";
 
+import { updateUser } from "../../store/actions/auth";
 import { switchUserEditorAction } from "../../store/actions/modal";
 
 const mapDispatchToProps = {
+  updateUser,
   switchUserEditorAction,
 };
 

@@ -3,13 +3,13 @@ import propTypes from "prop-types";
 
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-
-import "./UserMenu.scss";
-import ProfileViewer from "../../components/ProfileViewer/ProfileViewer";
 import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
+
+import "./UserMenu.scss";
+import ProfileViewer from "../../components/ProfileViewer/ProfileViewer";
 
 class UserMenu extends Component {
   state = {

@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
 import * as actionTypes from "./actionTypes";
-import axios from "../../services/axiosConfig";
+import axios, { getHeaders } from "../../services/axiosConfig";
 import { handleHttpError } from "../../utilities/httpErrors";
 
 import { mainLoaderSwitchAction } from "./mainLoader";
@@ -53,6 +53,25 @@ export const registerUser = (user) => {
       .catch((err) => {
         dispatch(mainLoaderSwitchAction(false));
         toast.error("Error ocurred");
+      });
+  };
+};
+
+export const updateUser = (user) => {
+  return (dispatch) => {
+    dispatch(mainLoaderSwitchAction(true));
+    axios
+      .patch("/auth/profile", user, getHeaders())
+      .then(() => {
+        const token = localStorage.getItem("smapToken");
+
+        dispatch(mainLoaderSwitchAction(false));
+        dispatch(getUser(token));
+        toast.success("User was updated");
+      })
+      .catch((err) => {
+        dispatch(mainLoaderSwitchAction(false));
+        handleHttpError(err, "Failed updating user");
       });
   };
 };
