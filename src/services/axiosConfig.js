@@ -9,6 +9,9 @@ export const getHeaders = () => {
   };
 };
 
-axios.defaults.baseURL = "http://localhost:3000";
+const protocol = window.location.protocol
+const origin = window.location.hostname
+
+axios.defaults.baseURL = `${protocol}//${origin}:3000`
 
 export default axios;
