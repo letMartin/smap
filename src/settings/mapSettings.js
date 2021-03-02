@@ -7,7 +7,7 @@ export const initMap = {
       maxZoom: 16,
       minZoom: 2,
       maxNativeZoom: 16,
-      id: "mapbox.outdoors",
+      id: "mapbox/streets-v11",
       accessToken:
         "pk.eyJ1Ijoic3RpbGxoYXZlbnRmb3VuZCIsImEiOiJjanMwcTJrbnExbTY0NDRvMzh6MnZuMmtxIn0.8LqTOLCbuQtAfCqftXzhyQ",
     },

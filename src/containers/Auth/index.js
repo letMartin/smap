@@ -1,11 +1,12 @@
 import { connect } from "react-redux";
-import { registerUser, authUser } from "../../store/actions/auth";
+import { registerUser, authUser, resetPassword } from "../../store/actions/auth";
 import { switchUserModalAction } from "../../store/actions/modal";
 
 import Auth from "./Auth";
 
 const mapDispatchToProps = {
   switchUserModalAction,
+  resetPassword,
   registerUser,
   authUser,
 };

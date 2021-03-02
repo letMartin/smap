@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import propTypes from "prop-types";
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";

@@ -76,6 +76,22 @@ export const updateUser = (user) => {
   };
 };
 
+export const resetPassword = (email) => {
+  return (dispatch) => {
+    dispatch(mainLoaderSwitchAction(true));
+    axios
+      .post("/auth/forgot-password", email)
+      .then(() => {
+        dispatch(mainLoaderSwitchAction(false));
+        toast.success("Success");
+      })
+      .catch((err) => {
+        dispatch(mainLoaderSwitchAction(false));
+        handleHttpError(err, "Failed");
+      });
+  };
+};
+
 export const authUserAction = () => {
   return {
     type: actionTypes.AUTH_USER,

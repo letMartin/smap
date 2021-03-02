@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import propTypes from "prop-types";
 import "./Auth.scss";
 
-import { cloneDeep } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import PersonOutlinedIcon from "@material-ui/icons/PersonOutlined";
 import AlternateEmailIcon from "@material-ui/icons/AlternateEmail";
 import VpnKeyOutlinedIcon from "@material-ui/icons/VpnKeyOutlined";
@@ -125,7 +126,26 @@ const initState = {
       },
     ],
   },
+  resetPassword: {
+    formKey: "resetPassword",
+    isSubmitClicked: false,
+    inpGroup: [
+      {
+        key: "email",
+        type: "text",
+        title: "Email",
+        placeholder: placeholders.email,
+        errorText: errors.email,
+        regex: emailRegExp,
+        value: "",
+        isValid: false,
+        startAdornment: <AlternateEmailIcon />,
+        endAdornment: null,
+      },
+    ],
+  },
   isLoginClicked: false,
+  isResetPasswordOpen: false,
 };
 
 class Auth extends Component {
@@ -134,6 +154,7 @@ class Auth extends Component {
   static propTypes = {
     authUser: propTypes.func,
     registerUser: propTypes.func,
+    resetPassword: propTypes.func,
     switchUserModalAction: propTypes.func,
     isUserModalOpen: propTypes.bool,
     isMainLoaderOn: propTypes.bool,
@@ -234,9 +255,28 @@ class Auth extends Component {
     return isValid;
   }
 
+  handleOpenPasswordReset (isOpen) {
+    this.setState({ isResetPasswordOpen: isOpen })
+  }
+
+  handleResetPassword () {
+    const form = { ...this.state.resetPassword };
+
+    form.isSubmitClicked = true;
+    this.setState({ resetPassword: form });
+
+    if (!this.isFormValid(form.inpGroup)) {
+      return;
+    } else {
+      const email = { email: form.inpGroup[0].value } 
+      this.props.resetPassword(email)
+    }
+  }
+
   render() {
-    const { authUser, registerUser } = this.state;
+    const { authUser, registerUser, resetPassword } = this.state;
     const { isMainLoaderOn } = this.props;
+
     return (
       <div className="auth__container">
         <form autoComplete="off">
@@ -254,11 +294,18 @@ class Auth extends Component {
           ))}
         </form>
         <div className="auth__buttons">
+        <Button
+            disabled={isMainLoaderOn}
+            onClick={() => this.handleOpenPasswordReset(true)}
+          >
+            Reset password
+          </Button>
+          <ButtonGroup>
           <Button
             onClick={() => this.handleToggleUserModal(true)}
             disabled={isMainLoaderOn}
           >
-            Create new user
+            New user
           </Button>
           <Button
             variant="contained"
@@ -268,6 +315,7 @@ class Auth extends Component {
           >
             Log in
           </Button>
+          </ButtonGroup>
         </div>
         <Dialog open={this.props.isUserModalOpen}>
           <div className="auth__new-user">
@@ -299,6 +347,45 @@ class Auth extends Component {
                 onClick={() => this.handleUserRegister()}
               >
                 Save
+              </Button>
+              {isMainLoaderOn && (
+                <div className="auth__new-user--loader">
+                  <CircularProgress />
+                </div>
+              )}
+            </div>
+          </div>
+        </Dialog>
+        <Dialog open={this.state.isResetPasswordOpen}>
+          <div className="auth__reset">
+            <form>
+              {resetPassword.inpGroup.map((inp, index) => (
+                <TextInput
+                  input={inp}
+                  key={inp.key + index}
+                  index={index}
+                  disabled={isMainLoaderOn}
+                  inpGroup={resetPassword.formKey}
+                  isSubmitClicked={resetPassword.isSubmitClicked}
+                  onTogglePassVisibility={this.togglePassVisibility}
+                  onInpChange={this.handleInputChange}
+                />
+              ))}
+            </form>
+            <div className="auth__buttons">
+              <Button
+                onClick={() => this.handleOpenPasswordReset(false)}
+                disabled={isMainLoaderOn}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={isMainLoaderOn}
+                onClick={() => this.handleResetPassword()}
+              >
+                Reset
               </Button>
               {isMainLoaderOn && (
                 <div className="auth__new-user--loader">
