@@ -217,7 +217,7 @@ class PostcardCreator extends Component {
     const { imageData, postcardText, receivers, postcardTitle } = this.state;
     const {
       user,
-      // deviceLocation,
+      deviceLocation,
     } = this.props;
 
     if (!this.isFormValid()) {
@@ -227,14 +227,14 @@ class PostcardCreator extends Component {
 
     const receiversIds = receivers.map((rec) => rec.id);
 
-    const lat = randomInt(65, -65);
-    const long = randomInt(-179, 179);
+    // const lat = randomInt(65, -65);
+    // const long = randomInt(-179, 179);
 
-    function randomInt(min, max) {
-      return min + Math.floor((max - min) * Math.random());
-    }
+    // function randomInt(min, max) {
+    //   return min + Math.floor((max - min) * Math.random());
+    // }
 
-    const fakeDeviceLocation = [lat, long];
+    // const fakeDeviceLocation = [lat, long];
 
     this.setState({ isLoaderOn: true });
 
@@ -245,7 +245,7 @@ class PostcardCreator extends Component {
           fileId,
           receiversIds,
           senderId: user.userId,
-          localization: fakeDeviceLocation,
+          localization: deviceLocation,
           content: postcardText.value,
           shortDescription: postcardTitle.value,
           fileWidth: imageData.width,
